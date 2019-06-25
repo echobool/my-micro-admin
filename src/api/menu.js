@@ -1,16 +1,37 @@
 import request from '@/utils/request'
 
-export function getRoutes() {
+export function getParentMenu(domain_id) {
   return request({
-    url: '/routes',
+    url: `/rbac/menu/parent/${domain_id}`,
     method: 'get'
   })
 }
 
-export function getRoles() {
+export function addMenu(data) {
   return request({
-    url: '/rbac/role/list',
-    method: 'get'
+    // headers: { 'Custom-Data': 'module' },
+    url: '/rbac/menu/',
+    method: 'put',
+    data
+  })
+}
+/**
+ * 添加模块
+ * @param {*} data
+ */
+export function addModule(data) {
+  return request({
+    url: '/rbac/menu/module',
+    method: 'put',
+    data
+  })
+}
+
+export function getMenus(query) {
+  return request({
+    url: '/rbac/menu/list',
+    method: 'get',
+    params: query
   })
 }
 
@@ -25,13 +46,6 @@ export function fetchRole(id) {
   return request({
     url: '/rbac/role/d/' + id,
     method: 'get'
-  })
-}
-export function addRole(data) {
-  return request({
-    url: '/rbac/role/',
-    method: 'put',
-    data
   })
 }
 

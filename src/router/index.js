@@ -83,18 +83,7 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/documentation',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
-      }
-    ]
-  },
+
   {
     path: '/guide',
     component: Layout,
@@ -130,41 +119,166 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
+    path: '/member',
+    component: Layout,
+    redirect: '/member/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Member',
+    meta: {
+      title: '用户管理',
+      icon: 'peoples',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'create',
+        component: () => import('@/views/member/create'),
+        name: 'CreateForm',
+        hidden: true,
+        meta: {
+          title: '添加用户'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/member/edit'),
+        name: 'EditUserForm',
+        hidden: true,
+        meta: {
+          title: '编辑用户'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+
+      {
+        path: 'list',
+        component: () => import('@/views/member/list'),
+        name: 'MemberList',
+        meta: {
+          title: '用户列表',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+
+      {
+        path: 'recovery/list',
+        component: () => import('@/views/member/recoveryList'),
+        name: 'RecoveryList',
+        meta: {
+          title: '用户回收站',
+          roles: ['admin'] // or you can only set roles in sub nav
+          // if do not set roles, means: this page does not require permission
+        }
+      }
+    ]
+  },
+
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
     alwaysShow: true, // will always show the root menu
     name: 'Permission',
     meta: {
-      title: 'Permission',
+      title: '访问控制',
       icon: 'lock',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
       {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
-        name: 'PagePermission',
+        path: 'domain',
+        component: () => import('@/views/permission/domain'),
+        name: 'Domain',
         meta: {
-          title: 'Page Permission',
+          title: '域列表',
+          roles: ['admin'] // or you can only set roles in sub nav
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+
+      {
+        path: 'domain/create',
+        component: () => import('@/views/permission/domainCreate'),
+        name: 'DomainForm',
+        hidden: true,
+        meta: {
+          title: '添加域'
+        }
+      },
+      {
+        path: 'domain/edit/:id(\\d+)',
+        component: () => import('@/views/permission/domainEdit'),
+        name: 'DomainEditForm',
+        hidden: true,
+        meta: {
+          title: '编辑域'
+        }
+      },
+      {
+        path: 'role/create',
+        component: () => import('@/views/permission/roleCreate'),
+        name: 'RoleForm',
+        hidden: true,
+        meta: {
+          title: '添加角色',
           roles: ['admin'] // or you can only set roles in sub nav
         }
       },
       {
-        path: 'directive',
+        path: 'role/edit/:id(\\d+)',
+        component: () => import('@/views/permission/roleEdit'),
+        name: 'RoleEditForm',
+        hidden: true,
+        meta: {
+          title: '编辑角色',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'directives',
         component: () => import('@/views/permission/directive'),
         name: 'DirectivePermission',
         meta: {
-          title: 'Directive Permission'
+          title: '权限策略'
           // if do not set roles, means: this page does not require permission
         }
       },
       {
-        path: 'role',
+        path: 'menu',
+        component: () => import('@/views/permission/menu'),
+        name: 'MenuList',
+        meta: {
+          title: '权限策略'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'menu/create',
+        component: () => import('@/views/permission/menuCreate'),
+        name: 'MenuForm',
+        hidden: true,
+        meta: {
+          title: '新建权限策略'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'menu/edit/:id(\\d+)',
+        component: () => import('@/views/permission/menuEdit'),
+        name: 'MenuEditForm',
+        hidden: true,
+        meta: {
+          title: '编辑菜单'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'menu.proto',
         component: () => import('@/views/permission/role'),
         name: 'RolePermission',
         meta: {
-          title: 'Role Permission',
+          title: '角色管理',
           roles: ['admin']
         }
       }

@@ -8,6 +8,7 @@
   }
 
   .sidebar-container {
+    border-right: #dddddd solid 1px;
     transition: width 0.28s;
     width: $sideBarWidth !important;
     background-color: $menuBg;
@@ -31,6 +32,7 @@
 
     .el-scrollbar__bar.is-vertical {
       right: 0px;
+      width: 2px;
     }
 
     .el-scrollbar {
@@ -66,6 +68,8 @@
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {
+      font-size: 12px;
+      font-weight: bold;
       &:hover {
         background-color: $menuHover !important;
       }
@@ -73,13 +77,15 @@
 
     .is-active>.el-submenu__title {
       color: $subMenuActiveText !important;
+      font-weight: bold;
+
     }
 
     & .nest-menu .el-submenu>.el-submenu__title,
     & .el-submenu .el-menu-item {
       min-width: $sideBarWidth !important;
       background-color: $subMenuBg !important;
-
+      font-size: 12px;
       &:hover {
         background-color: $subMenuHover !important;
       }

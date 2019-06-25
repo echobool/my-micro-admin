@@ -6,15 +6,15 @@
         <h3 class="title">Login Form</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="account">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
+          ref="account"
+          v-model="loginForm.account"
+          placeholder="Account"
+          name="account"
           type="text"
           tabindex="1"
           autocomplete="on"
@@ -49,11 +49,11 @@
 
       <div style="position:relative">
         <div class="tips">
-          <span>Username : admin</span>
+          <span>Account : admin</span>
           <span>Password : any</span>
         </div>
         <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
+          <span style="margin-right:18px;">Account : editor</span>
           <span>Password : any</span>
         </div>
 
@@ -74,15 +74,15 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { validAccount } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
 
 export default {
   name: 'Login',
   components: { SocialSign },
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
+    const validateAccount = (rule, value, callback) => {
+      if (!validAccount(value)) {
         callback(new Error('Please enter the correct user name'))
       } else {
         callback()
@@ -97,11 +97,11 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        account: '13880069309',
+        password: '123456dd'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        account: [{ required: true, trigger: 'blur', validator: validateAccount }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
@@ -128,8 +128,8 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.username === '') {
-      this.$refs.username.focus()
+    if (this.loginForm.account === '') {
+      this.$refs.account.focus()
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }

@@ -1,24 +1,76 @@
 import request from '@/utils/request'
 
-export function login(data) {
+export function addUser(data) {
   return request({
-    url: '/user/login',
+    url: '/passport/account/',
+    method: 'put',
+    data
+  })
+}
+
+export function fetchList(query) {
+  return request({
+    url: '/passport/account/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function recoveryList(query) {
+  return request({
+    url: '/passport/account/recovery',
+    method: 'get',
+    params: query
+  })
+}
+
+export function deleteUser(id) {
+  return request({
+    url: '/passport/account/' + id,
+    method: 'delete'
+  })
+}
+
+export function recoveryUser(id) {
+  return request({
+    url: '/passport/account/recovery/' + id,
+    method: 'post'
+  })
+}
+
+export function getInfo() {
+  return request({
+    url: '/passport/account/',
+    method: 'get'
+  })
+}
+
+export function fetchUser(id) {
+  return request({
+    url: '/passport/account/d/' + id,
+    method: 'get'
+  })
+}
+
+export function updateUser(data, id) {
+  return request({
+    url: '/passport/account/u/' + id,
     method: 'post',
     data
   })
 }
 
-export function getInfo(token) {
+export function login(data) {
   return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
+    url: '/passport/login',
+    method: 'post',
+    data
   })
 }
 
 export function logout() {
   return request({
-    url: '/user/logout',
+    url: '/passport/logout',
     method: 'post'
   })
 }

@@ -2,6 +2,7 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import { isJsonString } from '@/utils/index'
 
 // create an axios instance
 const service = axios.create({
@@ -19,7 +20,7 @@ service.interceptors.request.use(
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
+      config.headers['Authorization'] = 'Bearer ' + getToken()
     }
     return config
   },
@@ -43,41 +44,59 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    const res = response.data
+    return response.data
+  },
+  error => {
+    const res = error.response.data
+    const status = error.response.status
 
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    if (status === 404) {
       Message({
-        message: res.message || 'Error',
+        message: '请求的接口资源不存在，请联系管理员',
         type: 'error',
         duration: 5 * 1000
       })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
+    } else if (status === 403) {
+      Message({
+        message: '权限不足，无法访问请求的资源',
+        type: 'error',
+        duration: 5 * 1000
+      })
+    } else if (status === 401) {
+      // 如果token 过期后重新登录提示
+      MessageBox.confirm('您登录凭据已失效，请重新登录', {
+        confirmButtonText: '重新登录',
+        cancelButtonText: '算球了',
+        type: 'warning'
+      }).then(() => {
+        store.dispatch('user/resetToken').then(() => {
+          location.reload()
+        })
+      })
+    } else if (status === 405) {
+      Message({
+        message: '请求方法不允许，无法访问请求的资源',
+        type: 'error',
+        duration: 5 * 1000
+      })
+    } else {
+      if (isJsonString(res.message)) {
+        const micro = JSON.parse(res.message)
+        Message({
+          message: micro.detail || 'Error',
+          type: 'error',
+          duration: 5 * 1000
+        })
+      } else {
+        Message({
+          message: res.message || 'Error',
+          type: 'error',
+          duration: 5 * 1000
         })
       }
-      return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
+
+      console.log('err' + error) // for debug
     }
-  },
-  error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
     return Promise.reject(error)
   }
 )

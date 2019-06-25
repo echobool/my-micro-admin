@@ -348,3 +348,65 @@ export function removeClass(ele, cls) {
     ele.className = ele.className.replace(reg, ' ')
   }
 }
+/**
+ * 判断字符串是否是 json 字符串
+ * @param {string} str
+ */
+export function isJsonString(str) {
+  try {
+    if (typeof JSON.parse(str) === 'object') {
+      return true
+    }
+  } catch (e) {
+    return false
+  }
+  return false
+}
+/**
+ * 判断是否且有属性并返回其值或没有时的默认值
+ * @param {object} obj
+ * @param {string} property
+ * @param {*} defaultValue
+ */
+export function getProperty(obj, property, defaultValue) {
+  if (property in obj) {
+    return obj[property]
+  }
+  return defaultValue
+}
+
+/**
+ * 将列表数据转换成级联数据
+ * @param {*} a
+ * @param {*} idStr
+ * @param {*} pidStr
+ * @param {*} chindrenStr
+ */
+export function transData(a, idStr, pidStr, chindrenStr, defaultObj) {
+  var r = []
+  try {
+    if (typeof defaultObj === 'object') {
+      r = [defaultObj]
+    }
+  } catch (e) {
+    r = []
+  }
+
+  if (!Array.isArray(a)) {
+    return r
+  }
+  var hash = {}; var id = idStr; var pid = pidStr; var children = chindrenStr; var i = 0; var j = 0; var len = a.length
+  for (; i < len; i++) {
+    hash[a[i][id]] = a[i]
+  }
+  for (; j < len; j++) {
+    var aVal = a[j]; var hashVP = hash[aVal[pid]]
+    if (hashVP) {
+      !hashVP[children] && (hashVP[children] = [])
+      hashVP[children].push(aVal)
+    } else {
+      r.push(aVal)
+    }
+  }
+  return r
+}

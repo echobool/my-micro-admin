@@ -102,7 +102,7 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'role',
+        path: 'menu.proto',
         component: 'views/permission/role',
         name: 'RolePermission',
         meta: {
