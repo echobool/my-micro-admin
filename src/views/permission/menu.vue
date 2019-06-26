@@ -30,7 +30,7 @@
 
       <el-table-column align="center" label="权限策略名称">
         <template slot-scope="scope">
-          {{ scope.row.menu_name }}
+          <el-button type="text" @click="showDetail(scope)">{{ scope.row.menu_name }}</el-button>
         </template>
       </el-table-column>
       <el-table-column align="center" label="所属域">
@@ -43,17 +43,17 @@
           {{ scope.row.menu_type }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="路由名称">
+      <el-table-column align="center" width="150px" label="路由名称">
         <template slot-scope="scope">
           {{ scope.row.router_name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="图标">
+      <el-table-column align="center" width="150px" label="图标">
         <template slot-scope="scope">
           {{ scope.row.icon }}
         </template>
       </el-table-column>
-      <el-table-column align="header-center" label="描述">
+      <el-table-column align="header-center" width="400px" label="描述">
         <template slot-scope="scope">
           {{ scope.row.description }}
         </template>
@@ -70,15 +70,65 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.page_size" style="text-align:right" @pagination="getMenus" />
+    <pagination v-show="total>0" width="800" :total="total" :fullscreen="true" :page.sync="listQuery.page" :limit.sync="listQuery.page_size" style="text-align:right" @pagination="getMenus" />
+    <el-dialog :title="'基本信息'" width="800px" :close-on-click-modal="false" :visible.sync="dialogTableVisible">
+      <el-row :gutter="20" class="menu-row">
+        <el-col :span="4"><div class="bg-title">权限策略名称：</div></el-col>
+        <el-col :span="8"><div class="bg-content">{{ menu.menu_name }}</div></el-col>
+        <el-col :span="4"><div class="bg-title">类别：</div></el-col>
+        <el-col :span="8"><div class="bg-content">{{ menu.menu_type }}</div></el-col>
+      </el-row>
 
+      <el-row :gutter="20" class="menu-row">
+        <el-col :span="4"><div class="bg-title">所属域：</div></el-col>
+        <el-col :span="8"><div class="bg-content">{{ menu.domain.guard_name }}</div></el-col>
+        <el-col :span="4"><div class="bg-title">路由名称：</div></el-col>
+        <el-col :span="8"><div class="bg-content">{{ menu.router_name }}</div></el-col>
+      </el-row>
+      <el-row :gutter="20" class="menu-row">
+        <el-col :span="4"><div class="bg-title">备注：</div></el-col>
+        <el-col :span="20"><div class="bg-content">{{ menu.description }}</div></el-col>
+      </el-row>
+      <el-divider v-if="menu.actions.length" content-position="left">前端操作</el-divider>
+      <el-table v-if="menu.actions.length" :data="menu.actions" stripe>
+        <el-table-column align="center" label="操作名称">
+          <template slot-scope="scope">
+            {{ scope.row.action_name }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作标识">
+          <template slot-scope="scope">
+            {{ scope.row.action_key }}
+          </template>
+        </el-table-column>
+
+      </el-table>
+      <el-divider v-if="menu.resources.length" content-position="left">后台资源</el-divider>
+      <el-table v-if="menu.resources.length" :data="menu.resources" stripe>
+        <el-table-column align="center" label="操作名称">
+          <template slot-scope="scope">
+            {{ scope.row.resource_name }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作标识">
+          <template slot-scope="scope">
+            {{ scope.row.resource_path }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="请求方法">
+          <template slot-scope="scope">
+            {{ scope.row.method }}
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 
-import { getMenus } from '@/api/menu'
-// import { transData } from '@/utils/index'
+import { getMenus, fetchMenu } from '@/api/menu'
+import { getProperty } from '@/utils/index'
 import Pagination from '@/components/Pagination'
 
 export default {
@@ -92,7 +142,14 @@ export default {
         page_size: 20,
         domain_id: 0
       },
-      menusList: []
+      menusList: [],
+      dialogTableVisible: false,
+      dialogTitle: '',
+      menu: {
+        domain: {},
+        actions: [],
+        resources: []
+      }
     }
   },
   computed: {
@@ -106,16 +163,36 @@ export default {
   methods: {
     async getMenus() {
       const res = await getMenus(this.listQuery)
-      console.log(res)
       this.menusList = res.data.menus
       this.total = res.data.paginator.total
-      console.log(this.menusList)
     },
     load(tree, treeNode, resolve) {
-      console.log(tree, treeNode)
       getMenus({ parent_id: tree.id, page_size: 100, domain_id: this.listQuery.domain_id }).then(response => {
         resolve(response.data.menus)
       })
+    },
+    showDetail(scope) {
+      this.dialogTableVisible = true
+      this.dialogTitle = scope.row.menu_name
+      this.unsetMenu()
+      fetchMenu(scope.row.id).then(response => {
+        this.menu.menu_name = response.data.menu.menu_name
+        this.menu.router_name = response.data.menu.router_name
+        this.menu.menu_type = response.data.menu.menu_type
+        this.menu.domain = response.data.menu.domain
+        this.menu.description = response.data.menu.description
+        this.menu.actions = getProperty(response.data.menu, 'action_arrays', [])
+        this.menu.resources = getProperty(response.data.menu, 'resource_arrays', [])
+      })
+    },
+    unsetMenu() {
+      this.menu.menu_name = ''
+      this.menu.router_name = ''
+      this.menu.menu_type = ''
+      this.menu.domain = []
+      this.menu.description = ''
+      this.menu.actions = []
+      this.menu.resources = []
     }
   }
 }
@@ -129,5 +206,23 @@ export default {
   .permission-tree {
     margin-bottom: 30px;
   }
+}
+
+.menu-row {
+    margin-bottom: 1px;
+    font-size: 12px;
+    padding: 14px 0 8px 0;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    &:nth-child(odd){
+      background-color: #f5f5f5;
+    }
+  }
+
+div.bg-content {
+  color: #262626 !important;
 }
 </style>

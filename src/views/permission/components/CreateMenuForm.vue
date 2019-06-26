@@ -51,7 +51,7 @@
             <el-form-item label="描述" prop="description">
               <el-input v-model="ruleForm.description" />
             </el-form-item>
-            <el-form-item v-if="ruleForm.menu_type!='module'" label="图标" prop="icon">
+            <el-form-item v-if="ruleForm.menu_type!='module'" label="图标" prop="icon" placeholder="只须填写icon-class">
               <el-input v-model="ruleForm.icon" />
             </el-form-item>
             <el-form-item label="排序" prop="sort">
@@ -199,7 +199,7 @@ export default {
       gLoading: true,
       ruleForm: {
         domain_id: '',
-        parent_id: 0,
+        parent_id: '',
         menu_type: 'submenu',
         menu_name: '',
         router_name: '',

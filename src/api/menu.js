@@ -42,9 +42,9 @@ export function fetchList() {
   })
 }
 
-export function fetchRole(id) {
+export function fetchMenu(id) {
   return request({
-    url: '/rbac/role/d/' + id,
+    url: '/rbac/menu/d/' + id,
     method: 'get'
   })
 }
