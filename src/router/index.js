@@ -179,7 +179,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/permission/page',
     alwaysShow: true, // will always show the root menu
-    name: 'Permission',
+    name: 'AccessControl',
     meta: {
       title: '访问控制',
       icon: 'lock',
@@ -215,6 +215,63 @@ export const asyncRoutes = [
           title: '编辑域'
         }
       },
+
+      {
+        path: 'directives',
+        component: () => import('@/views/permission/directive'),
+        name: 'DirectivePermission',
+        meta: {
+          title: '权限策略'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'menu',
+        component: () => import('@/views/permission/menu'),
+        name: 'MenuList',
+        meta: {
+          title: '权限管理'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'menu/create',
+        component: () => import('@/views/permission/menuCreate'),
+        name: 'MenuForm',
+        hidden: true,
+        meta: {
+          title: '新建权限'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'menu/edit/:id(\\d+)',
+        component: () => import('@/views/permission/menuEdit'),
+        name: 'MenuEditForm',
+        hidden: true,
+        meta: {
+          title: '编辑权限'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'role/authorization',
+        component: () => import('@/views/permission/roleAuthorization'),
+        name: 'RoleAuthorizationMenu',
+        meta: {
+          title: '授权'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'role',
+        component: () => import('@/views/permission/role'),
+        name: 'RolePermission',
+        meta: {
+          title: '角色管理',
+          roles: ['admin']
+        }
+      },
       {
         path: 'role/create',
         component: () => import('@/views/permission/roleCreate'),
@@ -233,53 +290,6 @@ export const asyncRoutes = [
         meta: {
           title: '编辑角色',
           roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'directives',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
-        meta: {
-          title: '权限策略'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'menu',
-        component: () => import('@/views/permission/menu'),
-        name: 'MenuList',
-        meta: {
-          title: '权限策略'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'menu/create',
-        component: () => import('@/views/permission/menuCreate'),
-        name: 'MenuForm',
-        hidden: true,
-        meta: {
-          title: '新建权限策略'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'menu/edit/:id(\\d+)',
-        component: () => import('@/views/permission/menuEdit'),
-        name: 'MenuEditForm',
-        hidden: true,
-        meta: {
-          title: '编辑菜单'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'menu.proto',
-        component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
-        meta: {
-          title: '角色管理',
-          roles: ['admin']
         }
       }
     ]

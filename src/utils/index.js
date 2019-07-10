@@ -1,3 +1,4 @@
+
 /**
  * Created by PanJiaChen on 16/11/18.
  */
@@ -409,4 +410,24 @@ export function transData(a, idStr, pidStr, chindrenStr, defaultObj) {
     }
   }
   return r
+}
+
+export function menuType(params) {
+  let typeName = ''
+  if (params === undefined) {
+    return typeName
+  }
+
+  switch (params) {
+    case 'submenu':
+      typeName = '子菜单页面'
+      break
+    case 'parentmenu':
+      typeName = '父级菜单'
+      break
+    case 'module':
+      typeName = '资源模块'
+      break
+  }
+  return typeName
 }

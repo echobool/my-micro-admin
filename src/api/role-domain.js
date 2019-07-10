@@ -31,10 +31,9 @@ export function fetchDomain(id) {
   })
 }
 
-export function deleteDomain(query) {
+export function deleteDomain(id) {
   return request({
-    url: '/rbac/domain',
-    method: 'delete',
-    params: query
+    url: '/rbac/domain/' + id,
+    method: 'delete'
   })
 }

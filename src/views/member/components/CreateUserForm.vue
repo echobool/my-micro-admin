@@ -263,7 +263,7 @@ export default {
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
     getGroupList() {
-      this.listLoading = true
+      this.gLoading = true
       fetchList().then(response => {
         this.roles = this.groupTostruct(response.data.domains)
         this.gLoading = false

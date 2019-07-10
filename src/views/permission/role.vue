@@ -16,7 +16,7 @@
       </el-col>
 
     </el-row>
-    <el-table :data="rolesList" style="width: 100%;margin-top:30px;" :highlight-current-row="true" stripe fit>
+    <el-table v-loading="listLoading" :data="rolesList" style="width: 100%;margin-top:30px;" :highlight-current-row="true" stripe fit>
 
       <el-table-column align="center" label="角色名称">
         <template slot-scope="scope">
@@ -46,7 +46,7 @@
       <el-table-column width="180px" align="center" label="操作">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" plain @click="$router.push({name: 'RoleEditForm',params: {id:scope.row.id}})">编辑</el-button>
-          <el-button type="danger" size="mini" plain @click="handleDelete(scope)">删除</el-button>
+          <el-button type="danger" size="mini" plain @click="deleteConfirm(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -56,13 +56,13 @@
 
 <script>
 
-import { getRoles } from '@/api/role'
+import { getRoles, deleteRole } from '@/api/role'
 
 export default {
   name: 'RolePermission',
   data() {
     return {
-
+      listLoading: false,
       rolesList: []
     }
   },
@@ -75,10 +75,29 @@ export default {
     this.getRoles()
   },
   methods: {
-    async getRoles() {
-      const res = await getRoles()
-      console.log(res)
-      this.rolesList = res.data.roles
+    getRoles() {
+      this.listLoading = true
+      getRoles().then(response => {
+        console.log(response)
+        this.rolesList = response.data.roles
+        this.listLoading = false
+      })
+    },
+    deleteConfirm(row) {
+      this.$confirm('您确认要删除 ' + row.guard_name + ' 该域吗? 删除后将不能恢复。', '是否继续?', {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+      // 进行远程操作
+        deleteRole(row.id, row.role_name).then(response => {
+          this.getRoles()
+          this.$message({
+            message: '恭喜你，删除角色成功',
+            type: 'success'
+          })
+        })
+      }).catch(() => {})
     }
   }
 }

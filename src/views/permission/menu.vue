@@ -2,21 +2,23 @@
   <div class="app-container">
     <el-row :gutter="10" type="type">
       <aside>
-        权限策略基于域，不同域具有不同的权限<br>
+        权限基于域，不同域具有不同的权限<br>
         权限用于分配给同域下面的角色。<br>
         权限可以是菜单、restful路由、资源，用于前台展示或系统访问控制。<br>
         在开发过程中需要把新建的权限埋点到需要判断的地方。
       </aside>
-      <el-col :xs="24" :sm="24" :md="24" :lg="14" :xl="10">
+      <el-col :xs="24" :sm="24" :md="6" :lg="4" :xl="3">
         <div class="add-menu">
           <router-link :to="'/permission/menu/create/'">
-            <el-button type="primary" round>新建权限策略</el-button>
+            <el-button type="primary" round>新建权限</el-button>
           </router-link>
         </div>
+
       </el-col>
 
     </el-row>
     <el-table
+      v-loading="listLoading"
       row-key="id"
       :data="menusList"
       style="width: 100%;margin-top:30px;"
@@ -28,7 +30,7 @@
       :tree-props="{children: 'children', hasChildren: 'has_children'}"
     >
 
-      <el-table-column align="center" label="权限策略名称">
+      <el-table-column align="center" label="权限名称">
         <template slot-scope="scope">
           <el-button type="text" @click="showDetail(scope)">{{ scope.row.menu_name }}</el-button>
         </template>
@@ -40,17 +42,12 @@
       </el-table-column>
       <el-table-column align="center" label="类别">
         <template slot-scope="scope">
-          {{ scope.row.menu_type }}
+          {{ scope.row.menu_type_name }}
         </template>
       </el-table-column>
       <el-table-column align="center" width="150px" label="路由名称">
         <template slot-scope="scope">
           {{ scope.row.router_name }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" width="150px" label="图标">
-        <template slot-scope="scope">
-          {{ scope.row.icon }}
         </template>
       </el-table-column>
       <el-table-column align="header-center" width="400px" label="描述">
@@ -66,14 +63,14 @@
       <el-table-column width="180px" align="center" label="操作">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" plain @click="$router.push({name: 'MenuEditForm',params: {id:scope.row.id}})">编辑</el-button>
-          <el-button type="danger" size="mini" plain @click="handleDelete(scope)">删除</el-button>
+          <el-button type="danger" size="mini" plain @click="deleteConfirm(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" width="800" :total="total" :fullscreen="true" :page.sync="listQuery.page" :limit.sync="listQuery.page_size" style="text-align:right" @pagination="getMenus" />
     <el-dialog :title="'基本信息'" width="800px" :close-on-click-modal="false" :visible.sync="dialogTableVisible">
       <el-row :gutter="20" class="menu-row">
-        <el-col :span="4"><div class="bg-title">权限策略名称：</div></el-col>
+        <el-col :span="4"><div class="bg-title">权限名称：</div></el-col>
         <el-col :span="8"><div class="bg-content">{{ menu.menu_name }}</div></el-col>
         <el-col :span="4"><div class="bg-title">类别：</div></el-col>
         <el-col :span="8"><div class="bg-content">{{ menu.menu_type }}</div></el-col>
@@ -127,9 +124,10 @@
 
 <script>
 
-import { getMenus, fetchMenu } from '@/api/menu'
-import { getProperty } from '@/utils/index'
+import { getMenus, fetchMenu, deleteMenu } from '@/api/menu'
+import { getProperty, menuType } from '@/utils/index'
 import Pagination from '@/components/Pagination'
+// import { Loading } from 'element-ui'
 
 export default {
   name: 'MenuList',
@@ -142,6 +140,8 @@ export default {
         page_size: 20,
         domain_id: 0
       },
+      listLoading: false,
+      menuLoading: false,
       menusList: [],
       dialogTableVisible: false,
       dialogTitle: '',
@@ -161,29 +161,57 @@ export default {
     this.getMenus()
   },
   methods: {
-    async getMenus() {
-      const res = await getMenus(this.listQuery)
-      this.menusList = res.data.menus
-      this.total = res.data.paginator.total
+    getMenus() {
+      this.listLoading = true
+      getMenus(this.listQuery).then(response => {
+        this.menusList = response.data.menus
+        this.menusList.forEach(item => {
+          item.menu_type_name = menuType(item.menu_type)
+        })
+        this.total = getProperty(response.data.paginator, 'total', 0)
+        this.listLoading = false
+      })
     },
     load(tree, treeNode, resolve) {
       getMenus({ parent_id: tree.id, page_size: 100, domain_id: this.listQuery.domain_id }).then(response => {
-        resolve(response.data.menus)
+        const tempMenus = response.data.menus
+        tempMenus.forEach(item => {
+          item.menu_type_name = menuType(item.menu_type)
+        })
+        resolve(tempMenus)
       })
     },
     showDetail(scope) {
       this.dialogTableVisible = true
       this.dialogTitle = scope.row.menu_name
       this.unsetMenu()
+
       fetchMenu(scope.row.id).then(response => {
         this.menu.menu_name = response.data.menu.menu_name
         this.menu.router_name = response.data.menu.router_name
-        this.menu.menu_type = response.data.menu.menu_type
+        this.menu.menu_type = menuType(response.data.menu.menu_type)
         this.menu.domain = response.data.menu.domain
         this.menu.description = response.data.menu.description
         this.menu.actions = getProperty(response.data.menu, 'action_arrays', [])
         this.menu.resources = getProperty(response.data.menu, 'resource_arrays', [])
       })
+    },
+    deleteConfirm(row) {
+      this.$confirm('您确认要删除 ' + row.menu_name + ' 该权限吗? 删除后将移除角色上所有此权限。', '是否继续?', {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+      // 进行远程操作
+        deleteMenu(row.id).then(response => {
+          // 更新列表
+          this.getMenus()
+          this.$message({
+            message: '恭喜你，删除权限成功',
+            type: 'success'
+          })
+        })
+      }).catch(() => {})
     },
     unsetMenu() {
       this.menu.menu_name = ''
@@ -225,4 +253,9 @@ export default {
 div.bg-content {
   color: #262626 !important;
 }
+
+.el-divider{
+  margin-top: 50px;
+}
+
 </style>

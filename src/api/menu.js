@@ -49,17 +49,24 @@ export function fetchMenu(id) {
   })
 }
 
-export function updateRole(data, id) {
+export function updateMenu(data, id) {
   return request({
-    url: `/rbac/role/${id}`,
+    url: `/rbac/menu/${id}`,
     method: 'post',
     data
   })
 }
 
-export function deleteRole(id) {
+export function updateModule(data, id) {
   return request({
-    url: `/rbac/role/${id}`,
+    url: `/rbac/menu/module/${id}`,
+    method: 'patch',
+    data
+  })
+}
+export function deleteMenu(id) {
+  return request({
+    url: `/rbac/menu/${id}`,
     method: 'delete'
   })
 }

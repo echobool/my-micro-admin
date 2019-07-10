@@ -15,9 +15,19 @@
         </aside>
         <div class="createPost-main-container">
 
-          <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm">
+          <el-form
+            ref="ruleForm"
+            v-loading="formLoading"
+            element-loading-text="拼命加载中"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(250, 250, 250, 0.8)"
+            :model="ruleForm"
+            :rules="rules"
+            label-width="100px"
+            class="demo-ruleForm"
+          >
             <el-form-item label="菜单类型">
-              <el-radio-group v-model="ruleForm.menu_type">
+              <el-radio-group v-model="ruleForm.menu_type" :disabled="isEdit">
                 <!--改为提交判断是否用作父级菜单 去掉actions 和 resources 防止误操作删除了数据-->
                 <el-radio label="submenu">用作子菜单和页面</el-radio>
                 <el-radio label="parentmenu">用作父级菜单</el-radio>
@@ -39,10 +49,10 @@
               />
             </el-form-item>
             <el-form-item v-if="ruleForm.menu_type!='module'" label="菜单名称" prop="menu_name">
-              <el-input v-model="ruleForm.menu_name" :disabled="isEdit" />
+              <el-input v-model="ruleForm.menu_name" />
             </el-form-item>
             <el-form-item v-else label="模块名称" prop="menu_name">
-              <el-input v-model="ruleForm.menu_name" :disabled="isEdit" />
+              <el-input v-model="ruleForm.menu_name" />
             </el-form-item>
             <el-form-item v-if="ruleForm.menu_type!='module'" label="路由名称" prop="router_name">
               <el-input v-model="ruleForm.router_name" />
@@ -51,9 +61,7 @@
             <el-form-item label="描述" prop="description">
               <el-input v-model="ruleForm.description" />
             </el-form-item>
-            <el-form-item v-if="ruleForm.menu_type!='module'" label="图标" prop="icon" placeholder="只须填写icon-class">
-              <el-input v-model="ruleForm.icon" />
-            </el-form-item>
+
             <el-form-item label="排序" prop="sort">
               <el-input-number v-model="ruleForm.sort" controls-position="right" :min="1" :max="255" width="100%" />
             </el-form-item>
@@ -137,9 +145,11 @@
                         <el-option label="POST" value="POST" />
                         <el-option label="PUT" value="PUT" />
                         <el-option label="PATCH" value="PATCH" />
-                        <el-option label="DELELTE" value="DELELTE" />
+                        <el-option label="DELETE" value="DELETE" />
                         <el-option label="OPTIONS" value="OPTIONS" />
                         <el-option label="HEAD" value="HEAD" />
+                        <el-option label="READ" value="READ" />
+                        <el-option label="WRITE" value="WRITE" />
                       </el-select>
                     </el-form-item>
                   </template>
@@ -176,12 +186,15 @@ import {
   addMenu,
   addModule,
   getParentMenu,
-  updateRole
+  fetchMenu,
+  updateMenu,
+  updateModule
 } from '@/api/menu'
 import {
   fetchList
 } from '../../../api/role-domain'
-import { transData } from '@/utils/index'
+import { transData, getProperty } from '@/utils/index'
+
 export default {
   name: 'CreateMenuForm',
   components: {},
@@ -209,6 +222,7 @@ export default {
         resources: []
       },
       loading: false,
+      formLoading: false,
       tableData: [],
       rules: {
         domain_id: [{
@@ -265,6 +279,7 @@ export default {
       getParentMenu(this.ruleForm.domain_id).then(response => {
         // 将列表数据转换成级联数据
         this.parentMenu = transData(response.data.menus, 'id', 'parent_id', 'children', { menu_name: '一级菜单', id: 1000000 })
+        this.formLoading = false
         console.log(this.parentMenu)
       }).catch((err) => {
         console.log(err)
@@ -288,12 +303,21 @@ export default {
       rows.splice(index, 1)
     },
     fetchData() {
-      getParentMenu(this.ruleForm.domain_id).then(response => {
+      this.formLoading = true
+      fetchMenu(this.id).then(response => {
         this.ruleForm.domain_id = response.data.menu.domain_id
         this.ruleForm.menu_name = response.data.menu.menu_name
-        this.ruleForm.guard_name = response.data.menu.guard_name
+        const parent_id = getProperty(response.data.menu, 'parent_id', 1000000)
+        this.ruleForm.parent_id = [parent_id]
+        this.ruleForm.menu_type = response.data.menu.menu_type
+        this.ruleForm.router_name = response.data.menu.router_name
+        this.ruleForm.sort = getProperty(response.data.menu, 'sort', 255)
         this.ruleForm.description = response.data.menu.description
-
+        this.ruleForm.actions = response.data.menu.action_arrays
+        this.ruleForm.resources = response.data.menu.resource_arrays
+        if (this.ruleForm.domain_id) {
+          this.getParents(this.ruleForm.domain_id)
+        }
         // set tagsview title
         this.setTagsViewTitle()
       }).catch(err => {
@@ -301,7 +325,7 @@ export default {
       })
     },
     setTagsViewTitle() {
-      const title = '编辑角色'
+      const title = '编辑权限'
       const route = Object.assign({}, this.tempRoute, {
         title: `${title}-${this.id}`
       })
@@ -309,7 +333,6 @@ export default {
     },
 
     getGroupList() {
-      this.listLoading = true
       fetchList().then(response => {
         this.menuDomain = response.data.domains
         this.gLoading = false
@@ -320,13 +343,23 @@ export default {
         if (valid) {
           this.loading = true
           if (this.isEdit) {
-            updateRole(this.ruleForm, this.id).then(response => {
-              this.$message({
-                message: '恭喜你，编辑角色成功',
-                type: 'success'
+            if (this.ruleForm.menu_type === 'module') {
+              updateModule(this.ruleForm, this.id).then(response => {
+                this.$message({
+                  message: '恭喜你，编辑权限成功',
+                  type: 'success'
+                })
+                this.loading = false
               })
-              this.loading = false
-            })
+            } else {
+              updateMenu(this.ruleForm, this.id).then(response => {
+                this.$message({
+                  message: '恭喜你，编辑权限成功',
+                  type: 'success'
+                })
+                this.loading = false
+              })
+            }
           } else {
             if (this.ruleForm.menu_type === 'module') {
               addModule(this.ruleForm).then(response => {

@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/role-domain'
+import { fetchList, deleteDomain } from '@/api/role-domain'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import { getProperty } from '@/utils/index'
 export default {
@@ -104,7 +104,13 @@ export default {
         type: 'warning'
       }).then(() => {
       // 进行远程操作
-
+        deleteDomain(row.id).then(response => {
+          this.getList()
+          this.$message({
+            message: '恭喜你，删除域成功',
+            type: 'success'
+          })
+        })
       }).catch(() => {})
     }
   }

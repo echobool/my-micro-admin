@@ -43,9 +43,9 @@ export function updateRole(data, id) {
   })
 }
 
-export function deleteRole(id) {
+export function deleteRole(id, role_name) {
   return request({
-    url: `/rbac/role/${id}`,
+    url: `/rbac/role/${id}/${role_name}`,
     method: 'delete'
   })
 }

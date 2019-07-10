@@ -38,10 +38,11 @@ export function recoveryUser(id) {
   })
 }
 
-export function getInfo() {
+export function getInfo(query) {
   return request({
     url: '/passport/account/',
-    method: 'get'
+    method: 'get',
+    params: query
   })
 }
 
