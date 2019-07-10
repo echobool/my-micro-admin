@@ -27,7 +27,7 @@
 
         </div>
         <div class="add-role">
-          <el-button type="primary" plain @click="addAuth">新增授权</el-button>
+          <el-button :disabled="!checkPermission(['policyAdd'])" type="primary" plain @click="addAuth">新增授权</el-button>
         </div>
       </el-col>
     </el-row>
@@ -55,8 +55,8 @@
       </el-table-column>
       <el-table-column width="180px" align="center" label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" plain @click="authEdit(scope.row)">编辑</el-button>
-          <el-button type="danger" size="mini" plain @click="deleteConfirm(scope.row)">移除</el-button>
+          <el-button type="primary" :disabled="!checkPermission(['policyEdit'])" size="mini" plain @click="authEdit(scope.row)">编辑</el-button>
+          <el-button type="danger" :disabled="!checkPermission(['policyDelete'])" size="mini" plain @click="deleteConfirm(scope.row)">移除</el-button>
         </template>
       </el-table-column>
     </el-table>

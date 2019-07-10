@@ -11,7 +11,9 @@ export default function checkPermission(value) {
     const permissionRoles = value
 
     const hasPermission = roles.some(role => {
-      return permissionRoles.includes(role)
+      return role.policies.some(action => {
+        return permissionRoles.includes(action)
+      })
     })
 
     if (!hasPermission) {
@@ -19,7 +21,7 @@ export default function checkPermission(value) {
     }
     return true
   } else {
-    console.error(`need roles! Like v-permission="['admin','editor']"`)
+    console.error(`need roles! Like v-permission="['action1','action2']"`)
     return false
   }
 }

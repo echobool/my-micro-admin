@@ -77,7 +77,7 @@
 
       <el-table-column align="center" label="操作" width="90">
         <template slot-scope="scope">
-          <el-button plain type="danger" size="mini" style="margin-left:10px;" @click="recoveryConfirm(scope.row)">
+          <el-button plain type="danger" :disabled="!checkPermission(['userRecovery'])" size="mini" style="margin-left:10px;" @click="recoveryConfirm(scope.row)">
             恢复
           </el-button>
 

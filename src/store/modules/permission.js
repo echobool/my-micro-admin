@@ -5,9 +5,19 @@ import { asyncRoutes, constantRoutes } from '@/router'
  * @param roles
  * @param route
  */
-function hasPermission(roles, route) {
+/**
+ function hasPermission(roles, route) {
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.includes(role))
+  } else {
+    return true
+  }
+}
+ */
+
+function hasPermission(roles, route) {
+  if (route.name) {
+    return roles.some(role => role.policies.includes(route.name))
   } else {
     return true
   }

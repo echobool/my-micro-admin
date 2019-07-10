@@ -9,9 +9,7 @@
       </aside>
       <el-col :xs="24" :sm="24" :md="24" :lg="14" :xl="10">
         <div class="add-user">
-          <router-link :to="'/permission/domain/create/'">
-            <el-button type="primary" round>添加域</el-button>
-          </router-link>
+          <el-button type="primary" :disabled="!checkPermission(['DomainForm'])" round @click="$router.push({name: 'DomainForm'})">添加域</el-button>
         </div>
       </el-col>
 
@@ -48,11 +46,11 @@
       <el-table-column align="center" label="操作" width="180">
         <template slot-scope="scope">
           <router-link :to="'/permission/domain/edit/'+scope.row.id">
-            <el-button type="primary" size="mini" plain>
+            <el-button type="primary" :disabled="!checkPermission(['DomainEditForm'])" size="mini" plain>
               编辑
             </el-button>
           </router-link>
-          <el-button plain type="danger" size="mini" style="margin-left:10px;" @click="deleteConfirm(scope.row)">
+          <el-button plain type="danger" :disabled="!checkPermission(['domainDelete'])" size="mini" style="margin-left:10px;" @click="deleteConfirm(scope.row)">
             删除
           </el-button>
         </template>

@@ -51,15 +51,15 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo({ hasrole: true }).then(response => {
+      getInfo({ has_policy: true }).then(response => {
         const { data } = response
 
         if (!data) {
           reject('Verification failed, please Login again.')
         }
 
-        const { user_name, avatar_path, introduction } = data.user
-        const roles = ['admin']
+        const { user_name, avatar_path, introduction, roles } = data.user
+        // const roles = ['admin']
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')

@@ -126,8 +126,7 @@ export const asyncRoutes = [
     name: 'Member',
     meta: {
       title: '用户管理',
-      icon: 'peoples',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      icon: 'peoples'
     },
     children: [
       {
@@ -156,8 +155,7 @@ export const asyncRoutes = [
         component: () => import('@/views/member/list'),
         name: 'MemberList',
         meta: {
-          title: '用户列表',
-          roles: ['admin'] // or you can only set roles in sub nav
+          title: '用户列表'
         }
       },
 
@@ -166,9 +164,7 @@ export const asyncRoutes = [
         component: () => import('@/views/member/recoveryList'),
         name: 'RecoveryList',
         meta: {
-          title: '用户回收站',
-          roles: ['admin'] // or you can only set roles in sub nav
-          // if do not set roles, means: this page does not require permission
+          title: '用户回收站'
         }
       }
     ]
@@ -182,8 +178,7 @@ export const asyncRoutes = [
     name: 'AccessControl',
     meta: {
       title: '访问控制',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      icon: 'lock'
     },
     children: [
       {
@@ -191,9 +186,7 @@ export const asyncRoutes = [
         component: () => import('@/views/permission/domain'),
         name: 'Domain',
         meta: {
-          title: '域列表',
-          roles: ['admin'] // or you can only set roles in sub nav
-          // if do not set roles, means: this page does not require permission
+          title: '域管理'
         }
       },
 
@@ -268,8 +261,7 @@ export const asyncRoutes = [
         component: () => import('@/views/permission/role'),
         name: 'RolePermission',
         meta: {
-          title: '角色管理',
-          roles: ['admin']
+          title: '角色管理'
         }
       },
       {
@@ -278,8 +270,7 @@ export const asyncRoutes = [
         name: 'RoleForm',
         hidden: true,
         meta: {
-          title: '添加角色',
-          roles: ['admin'] // or you can only set roles in sub nav
+          title: '添加角色'
         }
       },
       {
@@ -288,8 +279,7 @@ export const asyncRoutes = [
         name: 'RoleEditForm',
         hidden: true,
         meta: {
-          title: '编辑角色',
-          roles: ['admin'] // or you can only set roles in sub nav
+          title: '编辑角色'
         }
       }
     ]

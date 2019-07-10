@@ -9,9 +9,9 @@
       </aside>
       <el-col :xs="24" :sm="24" :md="6" :lg="4" :xl="3">
         <div class="add-menu">
-          <router-link :to="'/permission/menu/create/'">
-            <el-button type="primary" round>新建权限</el-button>
-          </router-link>
+
+          <el-button type="primary" :disabled="!checkPermission(['MenuForm'])" round @click="$router.push({name: 'MenuForm'})">新建权限</el-button>
+
         </div>
 
       </el-col>
@@ -62,8 +62,8 @@
       </el-table-column>
       <el-table-column width="180px" align="center" label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" plain @click="$router.push({name: 'MenuEditForm',params: {id:scope.row.id}})">编辑</el-button>
-          <el-button type="danger" size="mini" plain @click="deleteConfirm(scope.row)">删除</el-button>
+          <el-button type="primary" size="mini" :disabled="!checkPermission(['MenuEditForm'])" plain @click="$router.push({name: 'MenuEditForm',params: {id:scope.row.id}})">编辑</el-button>
+          <el-button type="danger" size="mini" :disabled="!checkPermission(['policyDelete'])" plain @click="deleteConfirm(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

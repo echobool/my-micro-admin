@@ -4,9 +4,9 @@
       <el-col :xs="24" :sm="12" :md="12" :lg="10" :xl="8">
         <div class="add-user">
           <el-button-group>
-            <el-button type="primary" round icon="el-icon-edit" @click="$router.push({name: 'CreateForm'})">添加用户</el-button>
+            <el-button type="primary" :disabled="!checkPermission(['CreateForm'])" round icon="el-icon-edit" @click="$router.push({name: 'CreateForm'})">添加用户</el-button>
             <el-button type="success" icon="el-icon-refresh" @click="refresh()">重新加载</el-button>
-            <el-button type="warning" round icon="el-icon-delete" @click="$router.push({name: 'RecoveryList'})">用户回收站</el-button>
+            <el-button type="warning" :disabled="!checkPermission(['RecoveryList'])" round icon="el-icon-delete" @click="$router.push({name: 'RecoveryList'})">用户回收站</el-button>
           </el-button-group>
         </div>
       </el-col>
@@ -86,18 +86,18 @@
       <el-table-column align="center" label="操作" width="180">
         <template slot-scope="scope">
 
-          <el-dropdown size="mini" plain split-button type="primary" trigger="click" @click="$router.push({name: 'EditUserForm',params: {id:scope.row.id}})">
-            编辑
+          <el-dropdown size="mini">
+            <el-button size="mini" plain type="primary">
+              更多<i class="el-icon-arrow-down el-icon--right" />
+            </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>黄金糕</el-dropdown-item>
-              <el-dropdown-item>狮子头</el-dropdown-item>
-              <el-dropdown-item>螺蛳粉</el-dropdown-item>
-              <el-dropdown-item>双皮奶</el-dropdown-item>
-              <el-dropdown-item>蚵仔煎</el-dropdown-item>
+              <el-dropdown-item :disabled="!checkPermission(['EditUserForm'])" @click.native="$router.push({name: 'EditUserForm',params: {id:scope.row.id}})">编辑</el-dropdown-item>
+              <el-dropdown-item>操作日志</el-dropdown-item>
+
             </el-dropdown-menu>
           </el-dropdown>
 
-          <el-button plain type="danger" size="mini" style="margin-left:10px;" @click="deleteConfirm(scope.row)">
+          <el-button plain type="danger" :disabled="!checkPermission(['userDelete'])" size="mini" style="margin-left:10px;" @click="deleteConfirm(scope.row)">
             删除
           </el-button>
 

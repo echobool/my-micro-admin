@@ -9,9 +9,7 @@
       </aside>
       <el-col :xs="24" :sm="24" :md="24" :lg="14" :xl="10">
         <div class="add-role">
-          <router-link :to="'/permission/role/create/'">
-            <el-button type="primary" round>添加角色</el-button>
-          </router-link>
+          <el-button type="primary" :disabled="!checkPermission(['RoleForm'])" round @click="$router.push({name: 'RoleForm'})">添加角色</el-button>
         </div>
       </el-col>
 
@@ -45,8 +43,8 @@
       </el-table-column>
       <el-table-column width="180px" align="center" label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" plain @click="$router.push({name: 'RoleEditForm',params: {id:scope.row.id}})">编辑</el-button>
-          <el-button type="danger" size="mini" plain @click="deleteConfirm(scope.row)">删除</el-button>
+          <el-button type="primary" :disabled="!checkPermission(['RoleEditForm'])" size="mini" plain @click="$router.push({name: 'RoleEditForm',params: {id:scope.row.id}})">编辑</el-button>
+          <el-button type="danger" :disabled="!checkPermission(['roleDelete'])" size="mini" plain @click="deleteConfirm(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

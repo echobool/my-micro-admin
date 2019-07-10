@@ -31,6 +31,11 @@ import { mockXHR } from '../mock'
 if (process.env.NODE_ENV === 'production') {
   mockXHR()
 }
+// 权限判断指令 注册到全局
+import permission from '@/directive/permission/index.js'
+Vue.directive('permission', permission)
+import checkPermission from '@/utils/permission' // 权限判断函数
+Vue.prototype.checkPermission = checkPermission
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
