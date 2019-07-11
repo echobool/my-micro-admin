@@ -33,9 +33,14 @@ export default {
       const permissionRoles = value
 
       const hasPermission = roles.some(role => {
-        return role.policies.some(action => {
-          return permissionRoles.includes(action)
-        })
+        if (role.role_name === process.env.VUE_APP_PROTECTIVE_ROLE) {
+          return true
+        }
+        if (role['policies']) {
+          return role.policies.some(action => {
+            return permissionRoles.includes(action)
+          })
+        }
       })
 
       if (!hasPermission) {

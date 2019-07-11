@@ -68,7 +68,7 @@
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" width="800" :total="total" :fullscreen="true" :page.sync="listQuery.page" :limit.sync="listQuery.page_size" style="text-align:right" @pagination="getMenus" />
-    <el-dialog :title="'基本信息'" width="800px" :close-on-click-modal="false" :visible.sync="dialogTableVisible">
+    <el-dialog :title="'权限信息'" width="800px" :visible.sync="dialogTableVisible">
       <el-row :gutter="20" class="menu-row">
         <el-col :span="4"><div class="bg-title">权限名称：</div></el-col>
         <el-col :span="8"><div class="bg-content">{{ menu.menu_name }}</div></el-col>

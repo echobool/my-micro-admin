@@ -17,7 +17,14 @@ import { asyncRoutes, constantRoutes } from '@/router'
 
 function hasPermission(roles, route) {
   if (route.name) {
-    return roles.some(role => role.policies.includes(route.name))
+    return roles.some(role => {
+      if (role.role_name === process.env.VUE_APP_PROTECTIVE_ROLE) {
+        return true
+      }
+      if (role['policies']) {
+        return role.policies.includes(route.name)
+      }
+    })
   } else {
     return true
   }
