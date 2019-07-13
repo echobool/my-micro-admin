@@ -71,7 +71,7 @@ export function login(data) {
 
 export function logout() {
   return request({
-    url: '/passport/logout',
+    url: '/passport/account/logout',
     method: 'post'
   })
 }
