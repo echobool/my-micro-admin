@@ -92,7 +92,7 @@
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item :disabled="!checkPermission(['EditUserForm'])" @click.native="$router.push({name: 'EditUserForm',params: {id:scope.row.id}})">编辑</el-dropdown-item>
-              <el-dropdown-item>操作日志</el-dropdown-item>
+              <el-dropdown-item :disabled="!checkPermission(['BehaviorList'])" @click.native="$router.push({name: 'BehaviorList',params: {id:scope.row.id}})">操作日志</el-dropdown-item>
 
             </el-dropdown-menu>
           </el-dropdown>

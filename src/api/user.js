@@ -75,3 +75,18 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function behaviorList(uid, query) {
+  return request({
+    url: '/passport/behavior/list/' + uid,
+    method: 'get',
+    params: query
+  })
+}
+
+export function fetchBehavior(id) {
+  return request({
+    url: '/passport/behavior/d/' + id,
+    method: 'get'
+  })
+}

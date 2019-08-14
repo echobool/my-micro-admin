@@ -166,6 +166,15 @@ export const asyncRoutes = [
         meta: {
           title: '用户回收站'
         }
+      },
+      {
+        path: 'behavior/list/:id(\\d+)',
+        component: () => import('@/views/member/behaviorList'),
+        name: 'BehaviorList',
+        hidden: true,
+        meta: {
+          title: '操作日志'
+        }
       }
     ]
   },
