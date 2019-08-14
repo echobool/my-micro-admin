@@ -131,6 +131,7 @@
 <script>
 import { behaviorList, fetchBehavior } from '@/api/user'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import { getProperty } from '@/utils/index'
 
 export default {
   name: 'BehaviorList',
@@ -177,7 +178,7 @@ export default {
       this.listLoading = true
       behaviorList(this.uid, this.listQuery).then(response => {
         this.list = response.data.behaviors
-        this.total = response.data.paginator.total
+        this.total = getProperty(response.data.paginator, 'total', 0)
         this.listLoading = false
         this.setTagsViewTitle()
       })
