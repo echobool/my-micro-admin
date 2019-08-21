@@ -3,7 +3,13 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+
+        <h3 class="title">
+          <el-image
+            style="width: 100px; height: 100px"
+            src="https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png"
+          /> <br>
+          My-Micro-Admin</h3>
       </div>
 
       <el-form-item prop="account">
@@ -13,7 +19,7 @@
         <el-input
           ref="account"
           v-model="loginForm.account"
-          placeholder="Account"
+          placeholder="请输入用户名"
           name="account"
           type="text"
           tabindex="1"
@@ -31,7 +37,7 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="请输入密码"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -45,60 +51,38 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="warning" style="width:100%;margin-bottom:30px;margin-top:20px;font-size:20px;" @click.native.prevent="handleLogin">登 录</el-button>
+      <div style="text-align:center;color:#ddd;font-size:14px;">&copy;<a href="http://www.echobool.com">echobool</a></div>
 
-      <div style="position:relative">
-        <div class="tips">
-          <span>Account : admin</span>
-          <span>Password : any</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">Account : editor</span>
-          <span>Password : any</span>
-        </div>
-
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Or connect with
-        </el-button>
-      </div>
     </el-form>
 
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import { validAccount } from '@/utils/validate'
-import SocialSign from './components/SocialSignin'
 
 export default {
   name: 'Login',
-  components: { SocialSign },
   data() {
     const validateAccount = (rule, value, callback) => {
       if (!validAccount(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请输入用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码至少6位'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        account: '13880069309',
-        password: '123456dd'
+        account: '',
+        password: ''
       },
       loginRules: {
         account: [{ required: true, trigger: 'blur', validator: validateAccount }],
@@ -212,7 +196,7 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
+$bg:#ffffff;
 $light_gray:#fff;
 $cursor: #fff;
 
@@ -239,10 +223,6 @@ $cursor: #fff;
       height: 47px;
       caret-color: $cursor;
 
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
-      }
     }
   }
 
@@ -256,7 +236,7 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
+$bg:#f8f8ff;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 
@@ -270,9 +250,11 @@ $light_gray:#eee;
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
-    margin: 0 auto;
+    padding: 60px 35px 40px;
+    margin: 100px auto 0;
     overflow: hidden;
+    background: cadetblue;
+    border-radius: 13px;
   }
 
   .tips {
@@ -304,6 +286,7 @@ $light_gray:#eee;
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;
+      line-height: 150%;
     }
   }
 

@@ -1,14 +1,7 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10" type="type">
-      <el-col :xs="24" :sm="12" :md="12" :lg="10" :xl="8">
-        <div class="add-user">
-          <el-button-group>
-            <el-button type="success" icon="el-icon-refresh" @click="refresh()">重新加载</el-button>
-          </el-button-group>
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="12" :lg="14" :xl="16" style="text-align:right">
+      <el-col :xs="22" :sm="22" :md="22" :lg="23" :xl="23" style="text-align:right">
         <div class="search" style="">
           <el-input v-model="input3" label="检索用户" placeholder="请输入内容" class="input-with-select">
             <el-select slot="prepend" v-model="select" style="width:120px" placeholder="请选择">
@@ -19,6 +12,11 @@
             <el-button slot="append" icon="el-icon-search" type="primary">搜索</el-button>
           </el-input>
         </div>
+      </el-col>
+      <el-col :xs="2" :sm="2" :md="2" :lg="1" :xl="1" style="text-align:right">
+
+        <el-button circle icon="el-icon-refresh" @click="refresh()" />
+
       </el-col>
     </el-row>
 

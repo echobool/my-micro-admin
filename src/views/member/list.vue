@@ -1,26 +1,31 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10" type="type">
-      <el-col :xs="24" :sm="12" :md="12" :lg="10" :xl="8">
-        <div class="add-user">
-          <el-button-group>
-            <el-button type="primary" :disabled="!checkPermission(['CreateForm'])" round icon="el-icon-edit" @click="$router.push({name: 'CreateForm'})">添加用户</el-button>
-            <el-button type="success" icon="el-icon-refresh" @click="refresh()">重新加载</el-button>
-            <el-button type="warning" :disabled="!checkPermission(['RecoveryList'])" round icon="el-icon-delete" @click="$router.push({name: 'RecoveryList'})">用户回收站</el-button>
-          </el-button-group>
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="12" :lg="14" :xl="16" style="text-align:right">
-        <div class="search" style="">
-          <el-input v-model="input3" label="检索用户" placeholder="请输入内容" class="input-with-select">
-            <el-select slot="prepend" v-model="select" style="width:120px" placeholder="请选择">
+      <el-col :xs="22" :sm="22" :md="22" :lg="23" :xl="23">
+
+        <el-form ref="searchForm" :inline="true" :model="searchForm" :rules="rules" class="search">
+          <el-form-item>
+            <el-button type="primary" round :disabled="!checkPermission(['CreateForm'])" icon="el-icon-edit" @click="$router.push({name: 'CreateForm'})">添加用户</el-button>
+          </el-form-item>
+          <el-form-item label="查找用户" prop="searchType">
+            <el-select v-model="searchForm.searchType" style="width:120px" placeholder="请选择">
               <el-option label="手机号" value="phone_number" />
               <el-option label="用户名" value="user_name" />
               <el-option label="Email" value="email" />
             </el-select>
-            <el-button slot="append" icon="el-icon-search" type="primary">搜索</el-button>
-          </el-input>
-        </div>
+          </el-form-item>
+          <el-form-item prop="keyword">
+            <el-input v-model="searchForm.keyword" placeholder="请输入内容" clearable />
+          </el-form-item>
+          <el-form-item>
+            <el-button v-if="!showCancelButton" icon="el-icon-search" type="primary" @click="search('searchForm')">搜索</el-button>
+            <el-button v-if="showCancelButton" icon="el-icon-close" plain type="warning" @click="resetForm('searchForm')">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+      <!--刷新-->
+      <el-col :xs="2" :sm="2" :md="2" :lg="1" :xl="1" style="text-align:right">
+        <el-button circle type="primary" icon="el-icon-refresh" @click="refresh()" />
       </el-col>
     </el-row>
 
@@ -77,6 +82,13 @@
           <span>{{ scope.row.address }}</span>
         </template>
       </el-table-column>
+      <el-table-column class-name="status-col" label="角色">
+        <template slot-scope="scope">
+          <el-tag v-for="(role,i) in scope.row.role" :key="i">
+            {{ role }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column width="180px" align="center" label="注册日期">
         <template slot-scope="scope">
           <span>{{ scope.row.created_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -97,7 +109,7 @@
             </el-dropdown-menu>
           </el-dropdown>
 
-          <el-button plain type="danger" :disabled="!checkPermission(['userDelete'])" size="mini" style="margin-left:10px;" @click="deleteConfirm(scope.row)">
+          <el-button plain type="danger" :disabled="!checkPermission(['UserDelete'])" size="mini" style="margin-left:10px;" @click="deleteConfirm(scope.row)">
             删除
           </el-button>
 
@@ -112,6 +124,7 @@
 
 <script>
 import { fetchList, deleteUser } from '@/api/user'
+import { getProperty, objectMerge } from '@/utils/index'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
@@ -136,10 +149,22 @@ export default {
         page: 1,
         page_size: 20
       },
-      input3: '',
-      select: ''
+      searchForm: {
+        keyword: '',
+        searchType: ''
+      },
+      showCancelButton: false,
+      rules: {
+        keyword: [
+          { required: true, message: '请输入搜索值', trigger: 'blur' }
+        ],
+        searchType: [
+          { required: true, message: '请选择搜索类型', trigger: 'change' }
+        ]
+      }
     }
   },
+
   created() {
     this.getList()
   },
@@ -151,9 +176,19 @@ export default {
     },
     getList() {
       this.listLoading = true
+      if (this.searchForm.keyword && this.searchForm.searchType) {
+        // 查询时合并搜索请求
+        this.listQuery = objectMerge(this.listQuery, this.searchForm)
+        this.showCancelButton = true
+      } else {
+        // 否则删除合并的搜索项
+        delete this.listQuery.keyword
+        delete this.listQuery.searchType
+      }
+
       fetchList(this.listQuery).then(response => {
         this.list = response.data.users
-        this.total = response.data.paginator.total
+        this.total = getProperty(response.data.paginator, 'total', 0)
         this.listLoading = false
       })
     },
@@ -180,6 +215,24 @@ export default {
           })
         })
       }).catch(() => {})
+    },
+    search(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.getList()
+        } else {
+          // console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+      this.searchForm.keyword = ''
+      this.searchForm.searchType = ''
+      this.showCancelButton = false
+      this.listQuery.page = 1
+      this.getList()
     }
   }
 }
@@ -221,8 +274,6 @@ export default {
   }
 
   .search{
-    margin-bottom: 25px;width:450px;
-    float: left;
     margin-left: 15px;
   }
 

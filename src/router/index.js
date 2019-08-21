@@ -191,30 +191,12 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'domain',
-        component: () => import('@/views/permission/domain'),
-        name: 'Domain',
+        path: 'role/authorization',
+        component: () => import('@/views/permission/roleAuthorization'),
+        name: 'RoleAuthorizationMenu',
         meta: {
-          title: '域管理'
-        }
-      },
-
-      {
-        path: 'domain/create',
-        component: () => import('@/views/permission/domainCreate'),
-        name: 'DomainForm',
-        hidden: true,
-        meta: {
-          title: '添加域'
-        }
-      },
-      {
-        path: 'domain/edit/:id(\\d+)',
-        component: () => import('@/views/permission/domainEdit'),
-        name: 'DomainEditForm',
-        hidden: true,
-        meta: {
-          title: '编辑域'
+          title: '授权'
+          // if do not set roles, means: this page does not require permission
         }
       },
 
@@ -256,15 +238,7 @@ export const asyncRoutes = [
           // if do not set roles, means: this page does not require permission
         }
       },
-      {
-        path: 'role/authorization',
-        component: () => import('@/views/permission/roleAuthorization'),
-        name: 'RoleAuthorizationMenu',
-        meta: {
-          title: '授权'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
+
       {
         path: 'role',
         component: () => import('@/views/permission/role'),
@@ -289,6 +263,33 @@ export const asyncRoutes = [
         hidden: true,
         meta: {
           title: '编辑角色'
+        }
+      },
+      {
+        path: 'domain',
+        component: () => import('@/views/permission/domain'),
+        name: 'Domain',
+        meta: {
+          title: '域管理'
+        }
+      },
+
+      {
+        path: 'domain/create',
+        component: () => import('@/views/permission/domainCreate'),
+        name: 'DomainForm',
+        hidden: true,
+        meta: {
+          title: '添加域'
+        }
+      },
+      {
+        path: 'domain/edit/:id(\\d+)',
+        component: () => import('@/views/permission/domainEdit'),
+        name: 'DomainEditForm',
+        hidden: true,
+        meta: {
+          title: '编辑域'
         }
       }
     ]

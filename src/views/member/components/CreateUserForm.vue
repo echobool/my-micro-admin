@@ -49,7 +49,7 @@
             <el-form-item v-if="isEdit" label="生日">
               <el-col :span="11">
                 <el-form-item prop="date1">
-                  <el-date-picker v-model="ruleForm.birthday" type="date" placeholder="选择日期" style="width: 100%;" />
+                  <el-date-picker v-model="ruleForm.birthday" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" style="width: 100%;" />
                 </el-form-item>
               </el-col>
             </el-form-item>
