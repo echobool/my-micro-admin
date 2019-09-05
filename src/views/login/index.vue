@@ -51,8 +51,8 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="warning" style="width:100%;margin-bottom:30px;margin-top:20px;font-size:20px;" @click.native.prevent="handleLogin">登 录</el-button>
-      <div style="text-align:center;color:#ddd;font-size:14px;">&copy;<a href="http://www.echobool.com">echobool</a></div>
+      <el-button :loading="loading" type="warning" style="width:100%;margin-bottom:30px;margin-top:20px;font-size:28px;" @click.native.prevent="handleLogin">登 录</el-button>
+      <div style="text-align:center;color:#ccc;font-size:14px;">&copy;<a target="_blank" href="http://www.echobool.com">echobool</a></div>
 
     </el-form>
 
@@ -197,8 +197,8 @@ export default {
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg:#ffffff;
-$light_gray:#fff;
-$cursor: #fff;
+$light_gray:rgb(88, 88, 88);
+$cursor: rgb(75, 75, 75);
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
@@ -227,18 +227,23 @@ $cursor: #fff;
   }
 
   .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: rgba(211, 211, 211, 0.1);
+    border-radius: 3px;
     color: #454545;
+    margin-bottom: 50px;
+
+    .el-form-item__error {
+      padding-top: 14px;
+    }
   }
 }
 </style>
 
 <style lang="scss" scoped>
-$bg:#f8f8ff;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg:#ffffff;
+$dark_gray:#adadad;
+$light_gray:rgb(43, 39, 39);
 
 .login-container {
   min-height: 100%;
@@ -253,8 +258,9 @@ $light_gray:#eee;
     padding: 60px 35px 40px;
     margin: 100px auto 0;
     overflow: hidden;
-    background: cadetblue;
-    border-radius: 13px;
+    background: rgb(255, 255, 255);
+    border-radius: 3px;
+    box-shadow: 2px 0 46px rgba(0, 0, 0, 0.18);
   }
 
   .tips {

@@ -9,11 +9,8 @@
       </aside>
       <el-col :xs="24" :sm="24" :md="6" :lg="4" :xl="3">
         <div class="add-menu">
-
           <el-button type="primary" :disabled="!checkPermission(['MenuForm'])" round @click="$router.push({name: 'MenuForm'})">新建权限</el-button>
-
         </div>
-
       </el-col>
 
     </el-row>

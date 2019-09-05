@@ -7,7 +7,7 @@
         </aside>
       </el-col>
 
-      <el-col :xs="24" :sm="24" :md="16" :lg="12" :xl="12">
+      <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
         <div class="search" style="">
           <span class="sx">筛选角色：</span>
           <el-select v-model="listQuery.role_id" placeholder="请选择角色" :loading="gLoading" style="width:80%;" @change="getRolePolicies">
@@ -30,8 +30,19 @@
           <el-button :disabled="!checkPermission(['policyAdd'])" type="primary" plain @click="addAuth">新增授权</el-button>
         </div>
       </el-col>
+      <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+        <el-form ref="searchForm" :inline="true" :model="searchForm" :rules="rules" class="search-form">
+          <el-form-item prop="keyword">
+            <el-input v-model="searchForm.keyword" class="keyword" placeholder="请输入权限名称" clearable />
+          </el-form-item>
+          <el-form-item>
+            <el-button v-if="!showCancelButton" icon="el-icon-search" type="primary" @click="search('searchForm')">搜索</el-button>
+            <el-button v-if="showCancelButton" icon="el-icon-close" plain type="warning" @click="resetForm('searchForm')">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
     </el-row>
-    <el-table v-loading="listLoading" :data="rolePolicyList" :empty-text="tableEmptyText" style="width: 100%;margin-top:30px;" :highlight-current-row="true" stripe fit>
+    <el-table v-loading="listLoading" :data="rolePolicyList" :empty-text="tableEmptyText" style="width: 100%;" :highlight-current-row="true" stripe fit>
 
       <el-table-column align="center" label="权限">
         <template slot-scope="scope">
@@ -205,6 +216,10 @@ export default {
           message: '请选择后台资源',
           trigger: 'change'
         }]
+      },
+      showCancelButton: false,
+      searchForm: {
+        keyword: ''
       }
     }
   },
@@ -549,5 +564,11 @@ export default {
     background: #fff;
     padding: 0;
     margin-top: 10px;
+}
+.search-form {
+  text-align: right;
+  .keyword {
+    width: 300px;
+  }
 }
 </style>
