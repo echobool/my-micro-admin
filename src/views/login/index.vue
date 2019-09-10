@@ -1,15 +1,16 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
-
+      <div class="sidebar-logo-container">
+        <a href="#/" class="sidebar-logo-link router-link-active">
+          <img src="https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png" class="sidebar-logo">
+          <h1 class="sidebar-title">My-Micro-Admin </h1>
+        </a>
+      </div>
       <div class="title-container">
 
         <h3 class="title">
-          <el-image
-            style="width: 100px; height: 100px"
-            src="https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png"
-          /> <br>
-          My-Micro-Admin</h3>
+          登录后台管理</h3>
       </div>
 
       <el-form-item prop="account">
@@ -193,6 +194,38 @@ export default {
 </script>
 
 <style lang="scss">
+.sidebar-logo-container{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    background: #2b2f3a;
+    text-align: center;
+    overflow: hidden;
+
+     .sidebar-logo-link {
+          height: 100%;
+          width: 100%;
+
+          .sidebar-logo {
+              width: 32px;
+              height: 32px;
+              vertical-align: middle;
+              margin-right: 12px;
+          }
+          .sidebar-title {
+              display: inline-block;
+              margin: 0;
+              color: #fff;
+              font-weight: 600;
+              line-height: 50px;
+              font-size: 18px;
+              font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+              vertical-align: middle;
+          }
+      }
+}
+
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
@@ -231,7 +264,7 @@ $cursor: rgb(75, 75, 75);
     background: rgba(211, 211, 211, 0.1);
     border-radius: 3px;
     color: #454545;
-    margin-bottom: 50px;
+    margin-bottom: 45px;
 
     .el-form-item__error {
       padding-top: 14px;
@@ -255,7 +288,7 @@ $light_gray:rgb(43, 39, 39);
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 60px 35px 40px;
+    padding: 30px 35px 40px;
     margin: 100px auto 0;
     overflow: hidden;
     background: rgb(255, 255, 255);
@@ -285,12 +318,13 @@ $light_gray:rgb(43, 39, 39);
 
   .title-container {
     position: relative;
+    margin-top: 50px;
 
     .title {
       font-size: 26px;
       color: $light_gray;
       margin: 0px auto 40px auto;
-      text-align: center;
+      text-align: left;
       font-weight: bold;
       line-height: 150%;
     }

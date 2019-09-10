@@ -29,7 +29,7 @@
             <el-form-item label="菜单类型">
               <el-radio-group v-model="ruleForm.menu_type" :disabled="isEdit">
                 <!--改为提交判断是否用作父级菜单 去掉actions 和 resources 防止误操作删除了数据-->
-                <el-radio label="submenu">用作子菜单和页面</el-radio>
+                <el-radio label="submenu">用作页面</el-radio>
                 <el-radio label="parentmenu">用作父级菜单</el-radio>
                 <el-radio label="module">用作模块资源</el-radio>
               </el-radio-group>
@@ -313,8 +313,8 @@ export default {
         this.ruleForm.router_name = response.data.menu.router_name
         this.ruleForm.sort = getProperty(response.data.menu, 'sort', 255)
         this.ruleForm.description = response.data.menu.description
-        this.ruleForm.actions = response.data.menu.action_arrays
-        this.ruleForm.resources = response.data.menu.resource_arrays
+        this.ruleForm.actions = getProperty(response.data.menu, 'action_arrays', [])
+        this.ruleForm.resources = getProperty(response.data.menu, 'resource_arrays', [])
         if (this.ruleForm.domain_id) {
           this.getParents(this.ruleForm.domain_id)
         }

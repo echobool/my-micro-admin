@@ -199,16 +199,6 @@ export const asyncRoutes = [
           // if do not set roles, means: this page does not require permission
         }
       },
-
-      {
-        path: 'directives',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
-        meta: {
-          title: '权限策略'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
       {
         path: 'menu',
         component: () => import('@/views/permission/menu'),
@@ -294,7 +284,89 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  {
+    path: '/message',
+    component: Layout,
+    redirect: '/message/sms',
+    alwaysShow: true, // will always show the root menu
+    name: 'Message',
+    meta: {
+      title: '消息服务',
+      icon: 'message'
+    },
+    children: [
+      {
+        path: 'sms',
+        component: () => import('@/views/message/index'),
+        redirect: '/message/sms/log',
+        name: 'SmsNode',
+        meta: {
+          title: 'sms短信',
+          icon: 'email'
+        },
+        children: [
+          {
+            path: 'template',
+            component: () => import('@/views/message/smsTemplate'),
+            name: 'SmsTemplate',
+            meta: { title: '短信模板' }
+          },
+          {
+            path: 'log',
+            component: () => import('@/views/message/smsSendLog'),
+            name: 'SmsSendLog',
+            meta: { title: '发送记录' }
+          },
+          {
+            path: 'create',
+            component: () => import('@/views/message/create'),
+            hidden: true,
+            name: 'CreateSmsTemplate',
+            meta: {
+              title: '添加短信模板'
+            }
+          },
+          {
+            path: 'edit/:id(\\d+)',
+            component: () => import('@/views/message/edit'),
+            hidden: true,
+            name: 'EditSmsTemplate',
+            meta: {
+              title: '编辑短信模板'
+            }
+          }
+        ]
+      },
+      {
+        path: 'push',
+        component: () => import('@/views/message/index'),
+        redirect: '/message/push/log',
+        name: 'Push',
+        meta: {
+          title: '消息推送',
+          icon: 'guide'
+        },
+        children: [
+          {
+            path: 'template',
+            component: () => import('@/views/message/smsTemplate'),
+            name: 'PushTemplate',
+            meta: {
+              title: '推送模板'
+            }
+          },
+          {
+            path: 'log',
+            component: () => import('@/views/message/smsSendLog'),
+            name: 'PushLog',
+            meta: {
+              title: '推送记录'
+            }
+          }
+        ]
+      }
+    ]
+  },
   {
     path: '/icon',
     component: Layout,
