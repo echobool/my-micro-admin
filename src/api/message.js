@@ -52,3 +52,57 @@ export function fetchSmsLog(id) {
     method: 'get'
   })
 }
+
+// 推送接口
+export function addPushTemplate(data) {
+  return request({
+    url: '/message/push/template',
+    method: 'put',
+    data
+  })
+}
+
+export function updatePushTemplate(data, id) {
+  return request({
+    url: '/message/push/template/' + id,
+    method: 'post',
+    data
+  })
+}
+
+export function fetchPushTemplate(id) {
+  return request({
+    url: '/message/push/template/d/' + id,
+    method: 'get'
+  })
+}
+
+export function fetchPushTemplateList(query) {
+  return request({
+    url: '/message/push/template/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function deletePushTemplate(id) {
+  return request({
+    url: '/message/push/template/' + id,
+    method: 'delete'
+  })
+}
+
+export function fetchPushLogList(query) {
+  return request({
+    url: '/message/push/log/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function fetchPushLog(id) {
+  return request({
+    url: '/message/push/log/d/' + id,
+    method: 'get'
+  })
+}

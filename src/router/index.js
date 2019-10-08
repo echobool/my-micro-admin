@@ -349,7 +349,7 @@ export const asyncRoutes = [
         children: [
           {
             path: 'template',
-            component: () => import('@/views/message/smsTemplate'),
+            component: () => import('@/views/message/pushTemplate'),
             name: 'PushTemplate',
             meta: {
               title: '推送模板'
@@ -361,6 +361,24 @@ export const asyncRoutes = [
             name: 'PushLog',
             meta: {
               title: '推送记录'
+            }
+          },
+          {
+            path: 'create',
+            component: () => import('@/views/message/createPushTemplate'),
+            hidden: true,
+            name: 'CreatePushTemplate',
+            meta: {
+              title: '添加推送模板'
+            }
+          },
+          {
+            path: 'edit/:id(\\d+)',
+            component: () => import('@/views/message/editPushTemplate'),
+            hidden: true,
+            name: 'EditPushTemplate',
+            meta: {
+              title: '编辑短信模板'
             }
           }
         ]

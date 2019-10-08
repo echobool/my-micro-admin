@@ -93,3 +93,14 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+    .el-submenu::before{
+      content: "";
+      background: #eaeaea;
+      display: block;
+      height: 1px;
+      width: 100%;
+      margin: 0 auto;
+
+    }
+</style>

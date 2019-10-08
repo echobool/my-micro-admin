@@ -36,8 +36,8 @@
               />
             </el-form-item>
             <el-form-item>
-              <el-button v-if="isEdit" type="primary" @click="submitForm('ruleForm')">提交更新</el-button>
-              <el-button v-else type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+              <el-button v-if="isEdit" :loading="loading" :disabled="form_disabled" type="primary" @click="submitForm('ruleForm')">提交更新</el-button>
+              <el-button v-else :loading="loading" :disabled="form_disabled" type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
               <el-button v-if="!isEdit" @click="resetForm('ruleForm')">重置</el-button>
             </el-form-item>
           </el-form>
@@ -75,6 +75,7 @@ export default {
         template_param: ''
       },
       loading: false,
+      form_disabled: false,
       rules: {
 
         template_name: [
@@ -117,6 +118,7 @@ export default {
   created() {
     // 如果是编辑模式 需要加载初始数据
     if (this.isEdit) {
+      this.form_disabled = true
       this.id = this.$route.params && this.$route.params.id
       this.fetchData()
 
@@ -133,12 +135,13 @@ export default {
         this.ruleForm.template_param = response.data.smsTemplate.template_param
         // set tagsview title
         this.setTagsViewTitle()
+        this.form_disabled = false
       }).catch(err => {
         console.log(err)
       })
     },
     setTagsViewTitle() {
-      const title = '编辑用户分组'
+      const title = '编辑短信模板'
       const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.id}` })
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },

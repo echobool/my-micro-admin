@@ -66,7 +66,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column class-name="status-col" label="最近登录">
+      <el-table-column width="180px" class-name="status-col" label="最近登录">
         <template slot-scope="scope">
           <span>{{ scope.row.login_time }}</span>
         </template>
