@@ -84,7 +84,7 @@
       </el-table-column>
       <el-table-column class-name="status-col" label="角色">
         <template slot-scope="scope">
-          <el-tag v-for="(role,i) in scope.row.role" :key="i">
+          <el-tag v-for="(role,i) in scope.row.role" :key="i" size="mini" type="success">
             {{ role }}
           </el-tag>
         </template>

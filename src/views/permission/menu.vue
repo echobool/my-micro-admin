@@ -7,18 +7,35 @@
         权限可以是菜单、restful路由、资源，用于前台展示或系统访问控制。<br>
         在开发过程中需要把新建的权限埋点到需要判断的地方。
       </aside>
-      <el-col :xs="24" :sm="24" :md="6" :lg="4" :xl="3">
-        <div class="add-menu">
-          <el-button type="primary" :disabled="!checkPermission(['MenuForm'])" round @click="$router.push({name: 'MenuForm'})">新建权限</el-button>
-        </div>
+      <el-col :xs="22" :sm="22" :md="22" :lg="23" :xl="23">
+        <el-form ref="searchForm" :inline="true" :model="searchForm" :rules="rules" class="search">
+          <el-form-item>
+            <el-button type="primary" :disabled="!checkPermission(['MenuForm'])" round @click="$router.push({name: 'MenuForm'})">新建权限</el-button>
+          </el-form-item>
+          <el-form-item label="按域展示" prop="domain_id">
+            <el-select v-model="searchForm.domain_id" placeholder="请选择域" style="width:220px" :loading="gLoading" clearable @change="getMenus">
+              <el-option v-for="item in menuDomain" :key="item.id" :label="item.guard_name" :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="查找权限" prop="keyword">
+            <el-input v-model="searchForm.keyword" placeholder="请输入内容" clearable />
+          </el-form-item>
+          <el-form-item>
+            <el-button v-if="!showCancelButton" icon="el-icon-search" type="primary" @click="search('searchForm')">搜索</el-button>
+            <el-button v-if="showCancelButton" icon="el-icon-close" plain type="warning" @click="resetForm('searchForm')">取消</el-button>
+          </el-form-item>
+        </el-form>
       </el-col>
-
+      <!--刷新-->
+      <el-col :xs="2" :sm="2" :md="2" :lg="1" :xl="1" style="text-align:right">
+        <el-button circle type="primary" icon="el-icon-refresh" @click="refresh()" />
+      </el-col>
     </el-row>
     <el-table
       v-loading="listLoading"
       row-key="id"
       :data="menusList"
-      style="width: 100%;margin-top:30px;"
+      style="width: 100%;"
       :highlight-current-row="true"
       stripe
       fit
@@ -99,7 +116,7 @@
       </el-table>
       <el-divider v-if="menu.resources.length" content-position="left">后台资源</el-divider>
       <el-table v-if="menu.resources.length" :data="menu.resources" stripe>
-        <el-table-column align="center" label="操作名称">
+        <el-table-column align="center" width="200" label="操作名称">
           <template slot-scope="scope">
             {{ scope.row.resource_name }}
           </template>
@@ -109,7 +126,7 @@
             {{ scope.row.resource_path }}
           </template>
         </el-table-column>
-        <el-table-column align="center" label="请求方法">
+        <el-table-column align="center" width="150" label="请求方法">
           <template slot-scope="scope">
             {{ scope.row.method }}
           </template>
@@ -120,9 +137,9 @@
 </template>
 
 <script>
-
+import { fetchList } from '@/api/role-domain'
 import { getMenus, fetchMenu, deleteMenu } from '@/api/menu'
-import { getProperty, menuType } from '@/utils/index'
+import { getProperty, menuType, objectMerge } from '@/utils/index'
 import Pagination from '@/components/Pagination'
 // import { Loading } from 'element-ui'
 
@@ -132,12 +149,23 @@ export default {
   data() {
     return {
       total: 0,
+      menuDomain: [],
       listQuery: {
         page: 1,
-        page_size: 20,
-        domain_id: 0
+        page_size: 20
+      },
+      searchForm: {
+        keyword: '',
+        domain_id: ''
+      },
+      showCancelButton: false,
+      rules: {
+        keyword: [
+          { required: true, message: '请输入搜索值', trigger: 'blur' }
+        ]
       },
       listLoading: false,
+      gLoading: true,
       menuLoading: false,
       menusList: [],
       dialogTableVisible: false,
@@ -155,13 +183,31 @@ export default {
     }
   },
   created() {
+    this.getGroupList()
     this.getMenus()
   },
   methods: {
+    refresh() {
+      this.listQuery.page = 1
+      this.listQuery.page_size = 20
+      this.getMenus()
+    },
     getMenus() {
       this.listLoading = true
+
+      if (this.searchForm.keyword || this.searchForm.domain_id) {
+        // 查询时合并搜索请求
+        this.listQuery = objectMerge(this.listQuery, this.searchForm)
+        if (this.searchForm.keyword) this.showCancelButton = true
+      } else {
+        // 否则删除合并的搜索项
+        delete this.listQuery.keyword
+        delete this.listQuery.domain_id
+      }
+
       getMenus(this.listQuery).then(response => {
-        this.menusList = response.data.menus
+        this.menusList = getProperty(response.data, 'menus', [])
+
         this.menusList.forEach(item => {
           item.menu_type_name = menuType(item.menu_type)
         })
@@ -218,6 +264,30 @@ export default {
       this.menu.description = ''
       this.menu.actions = []
       this.menu.resources = []
+    },
+    getGroupList() {
+      fetchList().then(response => {
+        this.menuDomain = response.data.domains
+        this.gLoading = false
+      })
+    },
+    search(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.getMenus()
+        } else {
+          // console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+      this.listQuery.keyword = ''
+      this.listQuery.domain_id = ''
+      this.showCancelButton = false
+      this.listQuery.page = 1
+      this.getMenus()
     }
   }
 }

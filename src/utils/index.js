@@ -198,10 +198,15 @@ export function objectMerge(target, source) {
   }
   Object.keys(source).forEach(property => {
     const sourceProperty = source[property]
+
     if (typeof sourceProperty === 'object') {
       target[property] = objectMerge(target[property], sourceProperty)
     } else {
       target[property] = sourceProperty
+      // 如果赋值后是空值 就删除 不保留空键
+      if (target[property] === '') {
+        delete target[property]
+      }
     }
   })
   return target
