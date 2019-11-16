@@ -119,6 +119,27 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
+    path: '/configure',
+    component: Layout,
+    redirect: '/configure/list',
+    alwaysShow: true, // will always show the root menu 是否显示根目录
+    name: 'Configure',
+    meta: {
+      title: '配置管理',
+      icon: 'peoples'
+    },
+    children: [
+      {
+        path: 'List',
+        component: () => import('@/views/configure/list'),
+        name: 'ConfigureList',
+        meta: {
+          title: '应用配置'
+        }
+      }
+    ]
+  },
+  {
     path: '/member',
     component: Layout,
     redirect: '/member/list',

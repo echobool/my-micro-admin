@@ -17,7 +17,10 @@
               <el-radio v-model="ruleForm.push_type" label="NOTICE">通知</el-radio>
             </el-form-item>
             <el-form-item label="标题" prop="title" auto>
-              <el-input v-model="ruleForm.title" />
+              <el-input
+                v-model="ruleForm.title"
+                placeholder="变量格式 ${name}"
+              />
             </el-form-item>
             <el-form-item label="内容" prop="body">
               <el-input
