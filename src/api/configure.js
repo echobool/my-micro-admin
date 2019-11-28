@@ -23,11 +23,10 @@ export function deleteConfigure(id) {
   })
 }
 
-export function getInfo(query) {
+export function getInfo(id) {
   return request({
-    url: '/config/',
-    method: 'get',
-    params: query
+    url: '/config/d/' + id,
+    method: 'get'
   })
 }
 
@@ -39,3 +38,23 @@ export function updateConfigure(data, id) {
   })
 }
 
+export function getHistoryInfo(id) {
+  return request({
+    url: '/config/history/d/' + id,
+    method: 'get'
+  })
+}
+
+export function rollBack(id) {
+  return request({
+    url: '/config/history/rollback/' + id,
+    method: 'put'
+  })
+}
+export function fetchHistoryList(query, id) {
+  return request({
+    url: '/config/history/list/' + id,
+    method: 'get',
+    params: query
+  })
+}

@@ -3,7 +3,8 @@
     <template>
       <aside>
         因系统使用etcd作为服务注册发现，所以默认现在使用的是ETCD作为配置中心的储存引擎，以后考虑其它存储引擎。<br>
-        此管理默认没有开发删除配置功能，因为安全原因，请在etcd服务的控制台中删除相关key。<br>
+        同一配置时,版本号不能重复。<br>
+        请谨慎使用删除功能，一旦删除，配置将丢失，历史版本将同时删除。<br>
       </aside>
     </template>
     <el-row :gutter="10" type="type">
@@ -11,7 +12,7 @@
 
         <el-form ref="searchForm" :inline="true" :model="searchForm" :rules="rules" class="search">
           <el-form-item>
-            <el-button type="primary" round :disabled="!checkPermission(['CreateForm'])" icon="el-icon-edit" @click="$router.push({name: 'CreateForm'})">添加配置</el-button>
+            <el-button type="primary" round :disabled="!checkPermission(['CreateForm'])" icon="el-icon-edit" @click="openForm()">添加配置</el-button>
           </el-form-item>
           <el-form-item prop="keyword">
             <el-input v-model="searchForm.keyword" placeholder="请输入键名" clearable />
@@ -30,56 +31,104 @@
 
     <el-table v-loading="listLoading" :highlight-current-row="true" :data="list" stripe fit style="width: 100%">
 
-      <el-table-column label="key">
+      <el-table-column label="配置名称">
         <template slot-scope="scope">
-          <span>{{ scope.row.key }}</span>
+          <span>{{ scope.row.config_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="create_revision">
+      <el-table-column label="config_key">
         <template slot-scope="scope">
-          <span>{{ scope.row.create_revision }}</span>
+          <span>{{ scope.row.config_key }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="mod_revision">
-        <template slot-scope="scope">
-          <span>{{ scope.row.mod_revision }}</span>
-        </template>
-      </el-table-column>
+
       <el-table-column label="version">
         <template slot-scope="scope">
           <span>{{ scope.row.version }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="lease">
+      <el-table-column label="Beta">
         <template slot-scope="scope">
-          <span>{{ scope.row.lease }}</span>
+          <el-switch
+            v-model="scope.row.beta"
+            disabled
+          />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="180">
+      <el-table-column label="发布时间">
         <template slot-scope="scope">
-          <el-button plain type="primary" :disabled="!checkPermission(['ConfigureEdit'])" size="mini" style="margin-left:10px;" @click="deleteConfirm(scope.row)">
+          <span>{{ scope.row.updated_at | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="操作" width="250">
+        <template slot-scope="scope">
+          <el-button plain type="primary" :disabled="!checkPermission(['ConfigureEdit'])" size="mini" style="margin-left:10px;" @click="openForm(scope.row)">
             编辑
           </el-button>
-
+          <el-button plain type="primary" :disabled="!checkPermission(['ConfigureDelete'])" size="mini" style="margin-left:10px;" @click="deleteConfirm(scope.row)">
+            删除
+          </el-button>
+          <el-button plain type="primary" :disabled="!checkPermission(['ConfigureHistory'])" size="mini" style="margin-left:10px;" @click.native="$router.push({name: 'HistoryList',params: {id:scope.row.id,name:encodeURIComponent(scope.row.config_name)}})">
+            历史版本
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.page_size" style="text-align:right" @pagination="getList" />
 
+    <el-dialog :title="'添加配置'" width="1000px" :visible.sync="dialogTableVisible">
+      <el-row>
+        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+          <div class="createPost-main-container">
+            <el-form ref="ruleForm" :model="ruleForm" :rules="rules2" label-width="100px" class="demo-ruleForm">
+              <el-form-item label="配置名称" prop="config_name">
+                <el-input v-model="ruleForm.config_name" placeholder="配置名称" />
+              </el-form-item>
+              <el-form-item label="config key" prop="config_key" auto>
+                <el-input v-model="ruleForm.config_key" :disabled="isEdit" placeholder="通常填写对应服务的简写或服务名" />
+              </el-form-item>
+              <el-form-item label="Version" prop="version" auto>
+                <el-input v-model="ruleForm.version" placeholder="如：v1.0.0" />
+              </el-form-item>
+              <el-form-item label="Beta发布" prop="beta">
+                <el-switch
+                  v-model="ruleForm.beta"
+                />
+                <span style="padding-left:20px;">说明：选中beta发布模式，会以另一个文件保存,在获取配置时注意。</span>
+              </el-form-item>
+              <el-form-item label="配置内容" prop="config_value">
+                <div class="editor-container">
+                  <json-editor ref="jsonEditor" v-model="ruleForm.config_value" />
+                </div>
+                <span>注：配置内容为 json 代码格式。</span>
+              </el-form-item>
+
+              <el-form-item>
+                <el-button type="primary" :loading="loading" @click="submitForm('ruleForm')">发布</el-button>
+                <el-button :disabled="isEdit" @click="resetForm('ruleForm')">重置</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-col>
+      </el-row>
+
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList, deleteUser } from '@/api/configure'
-import { objectMerge } from '@/utils/index'
+import { addConfigure, updateConfigure, getInfo, fetchList, deleteConfigure } from '@/api/configure'
+import { getProperty, objectMerge } from '@/utils/index'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import JsonEditor from '@/components/JsonEditor'
 
 export default {
   name: 'MemberList',
-  components: { Pagination },
+  components: { Pagination, JsonEditor },
   data() {
     return {
+      id: '',
       list: null,
       total: 0,
       listLoading: true,
@@ -92,6 +141,7 @@ export default {
         searchType: ''
       },
       showCancelButton: false,
+
       rules: {
         keyword: [
           { required: true, message: '请输入搜索值', trigger: 'blur' }
@@ -99,7 +149,48 @@ export default {
         searchType: [
           { required: true, message: '请选择搜索类型', trigger: 'change' }
         ]
-      }
+      },
+      rules2: {
+        config_name: [
+          {
+            required: true,
+            message: '请输入配置名称',
+            trigger: 'blur'
+          },
+          {
+            min: 4,
+            message: '配置名称至少4个字符',
+            trigger: 'blur'
+          }
+        ],
+        config_key: [
+          {
+            required: true,
+            message: '请输入 config key',
+            trigger: 'blur'
+          },
+          {
+            min: 4,
+            message: 'config key 名至少4个字符',
+            trigger: 'blur'
+          }
+        ],
+        version: [{
+          required: true,
+          message: '请输入版本号',
+          trigger: 'blur'
+        }]
+      },
+      dialogTableVisible: false,
+      ruleForm: {
+        config_name: '',
+        config_key: '',
+        version: '',
+        beta: false,
+        config_value: JSON.parse('{}')
+      },
+      loading: false,
+      isEdit: false
     }
   },
 
@@ -107,6 +198,28 @@ export default {
     this.getList()
   },
   methods: {
+    openForm(row) {
+      this.dialogTableVisible = true
+      if (row) {
+        this.isEdit = true
+        getInfo(row.id).then(res => {
+          var config = res.data.config
+          this.ruleForm.config_name = config.config_name
+          this.ruleForm.config_key = config.config_key
+          this.ruleForm.config_value = JSON.parse(config.config_value)
+          this.ruleForm.version = config.version
+          this.ruleForm.beta = config.beta
+          this.id = row.id
+        })
+      } else {
+        this.isEdit = false
+        this.ruleForm.config_name = ''
+        this.ruleForm.config_key = ''
+        this.ruleForm.config_value = JSON.parse('{}')
+        this.ruleForm.version = ''
+        this.ruleForm.beta = false
+      }
+    },
     refresh() {
       this.listQuery.page = 1
       this.listQuery.page_size = 20
@@ -126,26 +239,18 @@ export default {
 
       fetchList(this.listQuery).then(response => {
         this.list = response.data.configs
-        // this.total = getProperty(response.data.paginator, 'total', 0)
+        this.total = getProperty(response.data.paginator, 'total', 0)
         this.listLoading = false
       })
     },
     deleteConfirm(row) {
-      let identification = ''
-      if (row.user_name) {
-        identification = row.user_name
-      } else if (row.phone_number) {
-        identification = row.phone_number
-      } else if (row.email) {
-        identification = row.email
-      }
-      this.$confirm('您确认要删除 ' + identification + ' 该用户吗? 可在回收站恢复。', '是否继续?', {
+      this.$confirm('您确认要删除 ' + row.config_key + ' 该配置吗? ', '是否继续?', {
         confirmButtonText: '删除',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         // 进行远程操作
-        deleteUser(row.id).then(response => {
+        deleteConfigure(row.id).then(response => {
           this.getList()
           this.$message({
             type: 'success',
@@ -164,13 +269,57 @@ export default {
         }
       })
     },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          try {
+            this.ruleForm.config_value = JSON.parse(this.ruleForm.config_value)
+          } catch (error) {
+            this.$message({
+              message: '请输入正确的配置内容 （ json 格式 ）',
+              type: 'error'
+            })
+            return
+          }
+
+          this.loading = true
+          if (this.isEdit) {
+            console.log(this.isEdit)
+            updateConfigure(this.ruleForm, this.id).then(response => {
+              this.$message({
+                message: '恭喜你，发布成功',
+                type: 'success'
+              })
+              this.loading = false
+              this.dialogTableVisible = false
+              this.getList()
+            }).catch(e => {
+              this.loading = false
+              console.log(e)
+            })
+          } else {
+            addConfigure(this.ruleForm).then(response => {
+              this.$message({
+                message: '恭喜你，添加配置并发布成功',
+                type: 'success'
+              })
+              this.resetForm('ruleForm')
+              this.loading = false
+              this.dialogTableVisible = false
+              this.getList()
+            }).catch(e => {
+              this.loading = false
+              console.log(e)
+            })
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields()
-      this.searchForm.keyword = ''
-      this.searchForm.searchType = ''
-      this.showCancelButton = false
-      this.listQuery.page = 1
-      this.getList()
     }
   }
 }
@@ -208,15 +357,23 @@ export default {
 }
 
 .el-card__body{
-    padding: 2px 5px;
-  }
+  padding: 2px 5px;
+}
 
-  .search{
-    margin-left: 15px;
-  }
+.search{
+  margin-left: 15px;
+}
 
-  .add-user{
-    float: left;
+.add-user{
+  float: left;
 
-  }
+}
+
+.editor-container{
+  position: relative;
+  height: 300px;
+  overflow:scroll;
+  line-height: 125%;
+
+}
 </style>

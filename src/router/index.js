@@ -130,11 +130,20 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'List',
+        path: 'list',
         component: () => import('@/views/configure/list'),
         name: 'ConfigureList',
         meta: {
           title: '应用配置'
+        }
+      },
+      {
+        path: 'history/:id(\\d+)/:name(\\S+)',
+        component: () => import('@/views/configure/historyList'),
+        name: 'HistoryList',
+        hidden: true,
+        meta: {
+          title: '应用配置-历史版本'
         }
       }
     ]
