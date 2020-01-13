@@ -4,7 +4,7 @@
       <div class="sidebar-logo-container">
         <a href="#/" class="sidebar-logo-link router-link-active">
           <img src="https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png" class="sidebar-logo">
-          <h1 class="sidebar-title">My-Micro-Admin </h1>
+          <h1 class="sidebar-title">EchoBool Admin </h1>
         </a>
       </div>
       <div class="title-container">
