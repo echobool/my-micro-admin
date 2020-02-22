@@ -436,3 +436,26 @@ export function menuType(params) {
   }
   return typeName
 }
+
+/**
+ * 返回 所有的parentid 如[22,33,44] 一级在前
+ * @param {*} parent_id
+ * @param {*} params
+ * @param {*} obj
+ */
+export function getAllParentIds(parent_id, params, obj) {
+  var r = Array.isArray(obj) ? obj : [parent_id]
+  try {
+    if (typeof params === 'object') {
+      params.forEach(item => {
+        if (item.id === parent_id && item.parent_id) {
+          r.unshift(item.parent_id)
+          getAllParentIds(item.parent_id, params, r)
+        }
+      })
+    }
+    return r
+  } catch (e) {
+    return []
+  }
+}

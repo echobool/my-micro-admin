@@ -35,7 +35,7 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item label="所属域" prop="domain_id">
-              <el-select v-model="ruleForm.domain_id" placeholder="请选择域" :loading="gLoading" @change="getParents">
+              <el-select v-model="ruleForm.domain_id" placeholder="请选择域" :loading="gLoading" @change="fetchParents">
                 <el-option v-for="item in menuDomain" :key="item.id" :label="item.guard_name" :value="item.id" />
               </el-select>
             </el-form-item>
@@ -193,7 +193,7 @@ import {
 import {
   fetchList
 } from '../../../api/role-domain'
-import { transData, getProperty } from '@/utils/index'
+import { transData, getProperty, getAllParentIds } from '@/utils/index'
 
 export default {
   name: 'CreateMenuForm',
@@ -209,6 +209,8 @@ export default {
       id: null,
       menuDomain: [],
       parentMenu: [],
+      parentMenuSource: [], // 主要解决 服务器端parent_id 存的是最后一级  而前端需要一个数组
+      parent_id: '', // 主要解决 服务器端parent_id 存的是最后一级  而前端需要一个数组
       gLoading: true,
       ruleForm: {
         domain_id: '',
@@ -274,16 +276,25 @@ export default {
       this.ruleForm.actions = []
       this.ruleForm.resources = []
     },
-    getParents(value) {
+    fetchParents(value) {
       console.log(value)
       getParentMenu(this.ruleForm.domain_id).then(response => {
+        // 将原始结构保留
+        this.parentMenuSource = response.data.menus
         // 将列表数据转换成级联数据
         this.parentMenu = transData(response.data.menus, 'id', 'parent_id', 'children', { menu_name: '一级菜单', id: 1000000 })
         this.formLoading = false
         console.log(this.parentMenu)
+        // 主要解决 服务器端parent_id 存的是最后一级  而前端需要一个数组
+        this.ruleForm.parent_id = getAllParentIds(this.parent_id, this.parentMenuSource, '')
+        console.log(this.ruleForm.parent_id)
       }).catch((err) => {
         console.log(err)
       })
+    },
+    getParentIds(parent_id) {
+      // 查找parent_id的parent_id的parent_id 。。。。。 能找出多少级就多少级 才能进行赋值
+
     },
     addAction() {
       this.ruleForm.actions.push({
@@ -307,8 +318,8 @@ export default {
       fetchMenu(this.id).then(response => {
         this.ruleForm.domain_id = response.data.menu.domain_id
         this.ruleForm.menu_name = response.data.menu.menu_name
-        const parent_id = getProperty(response.data.menu, 'parent_id', 1000000)
-        this.ruleForm.parent_id = [parent_id]
+        this.parent_id = getProperty(response.data.menu, 'parent_id', 1000000)
+        // this.ruleForm.parent_id = [parent_id]  在下面fetchParents成功后进行处理赋值
         this.ruleForm.menu_type = response.data.menu.menu_type
         this.ruleForm.router_name = response.data.menu.router_name
         this.ruleForm.sort = getProperty(response.data.menu, 'sort', 255)
@@ -316,7 +327,7 @@ export default {
         this.ruleForm.actions = getProperty(response.data.menu, 'action_arrays', [])
         this.ruleForm.resources = getProperty(response.data.menu, 'resource_arrays', [])
         if (this.ruleForm.domain_id) {
-          this.getParents(this.ruleForm.domain_id)
+          this.fetchParents(this.ruleForm.domain_id)
         }
         // set tagsview title
         this.setTagsViewTitle()

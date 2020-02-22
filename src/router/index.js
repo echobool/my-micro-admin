@@ -387,7 +387,7 @@ export const asyncRoutes = [
           },
           {
             path: 'log',
-            component: () => import('@/views/message/smsSendLog'),
+            component: () => import('@/views/message/pushLog'),
             name: 'PushLog',
             meta: {
               title: '推送记录'

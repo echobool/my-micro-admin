@@ -136,8 +136,9 @@
               <el-input-number v-model="ruleForm.config.SmsDelaySecs" controls-position="right" :precision="0" :min="1" :max="100" />
             </el-form-item>
             <el-form-item label="触发短信的条件" prop="SmsSendPolicy">
-              <el-radio v-model="ruleForm.config.SmsSendPolicy" :label="0">推送未收到时触发</el-radio>
-              <el-radio v-model="ruleForm.config.SmsSendPolicy" :label="1">用户未打开时触发</el-radio>
+              <el-radio v-model="ruleForm.config.SmsSendPolicy" label="0">推送未收到时触发</el-radio>
+              <el-radio v-model="ruleForm.config.SmsSendPolicy" label="1">用户未打开时触发</el-radio>
+              <el-radio v-model="ruleForm.config.SmsSendPolicy" label="2">不启用</el-radio>
             </el-form-item>
             <el-form-item>
               <el-button v-if="isEdit" :loading="loading" :disabled="form_disabled" type="primary" @click="submitForm('ruleForm')">提交更新</el-button>
@@ -199,7 +200,7 @@ export default {
           SmsSignName: '',
           SmsParams: '',
           SmsDelaySecs: 15,
-          SmsSendPolicy: 0
+          SmsSendPolicy: '0'
         },
         template_param: ''
       },
@@ -264,7 +265,6 @@ export default {
         this.ruleForm.config = getProperty(response.data.Template, 'configs', this.ruleForm.config)
         this.ruleForm.config.AndroidNotificationBarType = this.ruleForm.config.AndroidNotificationBarType ? this.ruleForm.config.AndroidNotificationBarType : 0
         this.ruleForm.config.AndroidNotificationBarPriority = this.ruleForm.config.AndroidNotificationBarPriority ? this.ruleForm.config.AndroidNotificationBarPriority : 0
-        this.ruleForm.config.SmsSendPolicy = this.ruleForm.config.SmsSendPolicy ? 1 : 0
         this.ruleForm.body = response.data.Template.body
         this.ruleForm.template_param = response.data.Template.template_param
         // set tagsview title
