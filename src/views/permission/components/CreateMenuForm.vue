@@ -1,7 +1,7 @@
 <template>
   <div class="createPost-container">
     <el-row>
-      <el-col :xs="24" :sm="20" :md="16" :lg="12" :xl="10">
+      <el-col :xs="24" :sm="20" :md="16" :lg="12" :xl="12">
 
         <aside>
           菜单是对每个域需要做管理后台而设计的。不是每个域都需要用到菜单。如：有的域是对APP的，根本没有管理界面。<br>
