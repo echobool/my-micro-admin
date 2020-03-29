@@ -126,7 +126,7 @@ export const asyncRoutes = [
     name: 'Configure',
     meta: {
       title: '配置管理',
-      icon: 'peoples'
+      icon: 'documentation'
     },
     children: [
       {
@@ -325,6 +325,16 @@ export const asyncRoutes = [
       icon: 'message'
     },
     children: [
+      {
+        path: 'mobile',
+        component: () => import('@/views/message/mobileManage'),
+        // redirect: '/message/sms/log',
+        name: 'MobileManage',
+        meta: {
+          title: '移动端管理',
+          icon: 'international'
+        }
+      },
       {
         path: 'sms',
         component: () => import('@/views/message/index'),

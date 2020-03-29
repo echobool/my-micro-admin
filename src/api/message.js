@@ -106,3 +106,42 @@ export function fetchPushLog(id) {
     method: 'get'
   })
 }
+
+// 管理移动端接口
+export function addMobile(data) {
+  return request({
+    url: '/message/mobile',
+    method: 'put',
+    data
+  })
+}
+
+export function updateMobile(data, id) {
+  return request({
+    url: '/message/mobile/' + id,
+    method: 'post',
+    data
+  })
+}
+
+export function fetchMobile(id) {
+  return request({
+    url: '/message/mobile/d/' + id,
+    method: 'get'
+  })
+}
+
+export function fetchMobileList(query) {
+  return request({
+    url: '/message/mobile/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function deleteMobile(id) {
+  return request({
+    url: '/message/mobile/' + id,
+    method: 'delete'
+  })
+}
