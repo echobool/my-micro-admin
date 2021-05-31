@@ -20,11 +20,7 @@ export default function checkPermission(value) {
         })
       }
     })
-
-    if (!hasPermission) {
-      return false
-    }
-    return true
+    return hasPermission
   } else {
     console.error(`need roles! Like v-permission="['action1','action2']"`)
     return false
