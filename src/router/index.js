@@ -148,66 +148,6 @@ export const asyncRoutes = [
       }
     ]
   },
-  {
-    path: '/member',
-    component: Layout,
-    redirect: '/member/list',
-    alwaysShow: true, // will always show the root menu
-    name: 'Member',
-    meta: {
-      title: '用户管理',
-      icon: 'peoples'
-    },
-    children: [
-      {
-        path: 'create',
-        component: () => import('@/views/member/create'),
-        name: 'CreateForm',
-        hidden: true,
-        meta: {
-          title: '添加用户'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/member/edit'),
-        name: 'EditUserForm',
-        hidden: true,
-        meta: {
-          title: '编辑用户'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-
-      {
-        path: 'list',
-        component: () => import('@/views/member/list'),
-        name: 'MemberList',
-        meta: {
-          title: '用户列表'
-        }
-      },
-
-      {
-        path: 'recovery/list',
-        component: () => import('@/views/member/recoveryList'),
-        name: 'RecoveryList',
-        meta: {
-          title: '用户回收站'
-        }
-      },
-      {
-        path: 'behavior/list/:id(\\d+)',
-        component: () => import('@/views/member/behaviorList'),
-        name: 'BehaviorList',
-        hidden: true,
-        meta: {
-          title: '操作日志'
-        }
-      }
-    ]
-  },
 
   {
     path: '/permission',
@@ -422,6 +362,124 @@ export const asyncRoutes = [
             }
           }
         ]
+      }
+    ]
+  },
+  {
+    path: '/base',
+    component: Layout,
+    redirect: '/base/enterprise',
+    alwaysShow: true, // will always show the root menu 是否显示根目录
+    name: 'Configure',
+    meta: {
+      title: '公共基础',
+      icon: 'documentation'
+    },
+    children: [
+      {
+        path: 'enterprise/list',
+        component: () => import('@/views/base/enterpriseList'),
+        name: 'CustomList',
+        meta: {
+          title: '客户管理'
+        }
+      },
+      {
+        path: 'teacher/list',
+        component: () => import('@/views/base/teacherList'),
+        name: 'TeacherList',
+        meta: {
+          title: '老师审核'
+        }
+      },
+      {
+        path: 'history/:id(\\d+)/:name(\\S+)',
+        component: () => import('@/views/configure/historyList'),
+        name: 'HistoryList',
+        meta: {
+          title: '班级管理'
+        }
+      }
+    ]
+  },
+  {
+    path: '/member',
+    component: Layout,
+    redirect: '/member/list',
+    alwaysShow: true, // will always show the root menu
+    name: 'Member',
+    meta: {
+      title: '用户管理',
+      icon: 'peoples'
+    },
+    children: [
+      {
+        path: 'create',
+        component: () => import('@/views/member/create'),
+        name: 'CreateForm',
+        hidden: true,
+        meta: {
+          title: '添加用户'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/member/edit'),
+        name: 'EditUserForm',
+        hidden: true,
+        meta: {
+          title: '编辑用户'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+
+      {
+        path: 'list',
+        component: () => import('@/views/member/list'),
+        name: 'MemberList',
+        meta: {
+          title: '用户列表'
+        }
+      },
+
+      {
+        path: 'recovery/list',
+        component: () => import('@/views/member/recoveryList'),
+        name: 'RecoveryList',
+        meta: {
+          title: '用户回收站'
+        }
+      },
+      {
+        path: 'behavior/list/:id(\\d+)',
+        component: () => import('@/views/member/behaviorList'),
+        name: 'BehaviorList',
+        hidden: true,
+        meta: {
+          title: '操作日志'
+        }
+      }
+    ]
+  },
+  {
+    path: '/course',
+    component: Layout,
+    redirect: '/course/cate',
+    alwaysShow: true, // will always show the root menu 是否显示根目录
+    name: 'Configure',
+    meta: {
+      title: '课程系统',
+      icon: 'documentation'
+    },
+    children: [
+      {
+        path: 'course/cate',
+        component: () => import('@/views/course/cateList'),
+        name: 'CateList',
+        meta: {
+          title: '分类管理'
+        }
       }
     ]
   },

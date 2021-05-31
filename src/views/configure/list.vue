@@ -12,7 +12,7 @@
 
         <el-form ref="searchForm" :inline="true" :model="searchForm" :rules="rules" class="search">
           <el-form-item>
-            <el-button type="primary" round :disabled="!checkPermission(['CreateForm'])" icon="el-icon-edit" @click="openForm()">添加配置</el-button>
+            <el-button type="primary" round :disabled="!checkPermission(['CreateConfigureForm'])" icon="el-icon-edit" @click="openForm()">添加配置</el-button>
           </el-form-item>
           <el-form-item prop="keyword">
             <el-input v-model="searchForm.keyword" placeholder="请输入键名" clearable />
@@ -124,7 +124,7 @@ import Pagination from '@/components/Pagination' // Secondary package based on e
 import JsonEditor from '@/components/JsonEditor'
 
 export default {
-  name: 'MemberList',
+  name: 'ConfigureList',
   components: { Pagination, JsonEditor },
   data() {
     return {

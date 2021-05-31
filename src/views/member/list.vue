@@ -5,7 +5,7 @@
 
         <el-form ref="searchForm" :inline="true" :model="searchForm" :rules="rules" class="search">
           <el-form-item>
-            <el-button type="primary" round :disabled="!checkPermission(['CreateForm'])" icon="el-icon-edit" @click="$router.push({name: 'CreateForm'})">添加用户</el-button>
+            <el-button type="primary" round :disabled="!checkPermission(['CreateUserForm'])" icon="el-icon-edit" @click="$router.push({name: 'CreateForm'})">添加用户</el-button>
           </el-form-item>
           <el-form-item label="查找用户" prop="searchType">
             <el-select v-model="searchForm.searchType" style="width:120px" placeholder="请选择">

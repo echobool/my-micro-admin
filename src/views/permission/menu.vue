@@ -59,7 +59,7 @@
           {{ scope.row.menu_type_name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" width="150px" label="路由名称">
+      <el-table-column align="center" width="250px" label="路由名称">
         <template slot-scope="scope">
           {{ scope.row.router_name }}
         </template>

@@ -39,7 +39,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="400" class-name="status-col" label="内容">
+      <el-table-column width="350" class-name="status-col" label="内容">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
         </template>
@@ -49,12 +49,12 @@
           <span>{{ scope.row.template_param }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="180px" align="center" label="添加时间">
+      <el-table-column width="150px" align="center" label="添加时间">
         <template slot-scope="scope">
           <span>{{ scope.row.created_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="180px" align="center" label="更新时间">
+      <el-table-column width="150px" align="center" label="更新时间">
         <template slot-scope="scope">
           <span>{{ scope.row.updated_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
